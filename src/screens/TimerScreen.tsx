@@ -4,6 +4,8 @@ import { useStudyStore } from '../store/studyStore'
 import { useAppStore } from '../store/appStore'
 import { formatTime, formatMinutes } from '../utils/time'
 import { FOCUS_DURATION, BREAK_DURATION } from '../types'
+import shared from '../styles/shared.module.css'
+import styles from './TimerScreen.module.css'
 
 export function TimerScreen() {
   const { mode, status, timeLeft, start, pause, reset, tick, switchMode, completedToday } =
@@ -40,21 +42,23 @@ export function TimerScreen() {
   const dashOffset = circumference * (1 - progress / 100)
 
   return (
-    <div className="screen">
-      <div className="header">
-        <div className="header-title">타이머</div>
+    <div className={shared.screen}>
+      <div className={shared.header}>
+        <div className={shared.headerTitle}>타이머</div>
       </div>
 
       {/* Mode Tabs */}
-      <div className="mode-tabs">
+      <div className={styles.modeTabs}>
         <button
-          className={`mode-tab ${mode === 'focus' ? 'active' : ''}`}
+          type="button"
+          className={`${styles.modeTab} ${mode === 'focus' ? styles.active : ''}`}
           onClick={() => switchMode('focus')}
         >
           집중 25분
         </button>
         <button
-          className={`mode-tab ${mode === 'break' ? 'active' : ''}`}
+          type="button"
+          className={`${styles.modeTab} ${mode === 'break' ? styles.active : ''}`}
           onClick={() => switchMode('break')}
         >
           휴식 5분
@@ -63,26 +67,26 @@ export function TimerScreen() {
 
       {/* Completed notification */}
       {lastCompleted && status === 'idle' && (
-        <div className="session-complete pop-in">
-          <div className="session-complete-icon">
+        <div className={`${styles.sessionComplete} ${shared.popIn}`}>
+          <div className={styles.sessionCompleteIcon}>
             {mode === 'break' ? '☕' : '✅'}
           </div>
-          <div className="session-complete-title">
+          <div className={styles.sessionCompleteTitle}>
             {mode === 'break' ? '집중 완료! 잠깐 쉬어요' : '휴식 완료! 다시 집중해요'}
           </div>
-          <div className="session-complete-sub">
+          <div className={styles.sessionCompleteSub}>
             {mode === 'break' ? `${lastCompleted} 기록 저장됨` : '새 집중 세션을 시작하세요'}
           </div>
         </div>
       )}
 
       {/* Circular Timer */}
-      <div className="timer-display">
-        <div className="timer-ring-container">
-          <svg className="timer-ring-svg" width="240" height="240" viewBox="0 0 240 240">
-            <circle className="timer-ring-bg" cx="120" cy="120" r="110" />
+      <div className={styles.timerDisplay}>
+        <div className={styles.timerRingContainer}>
+          <svg className={styles.timerRingSvg} width="240" height="240" viewBox="0 0 240 240">
+            <circle className={styles.timerRingBg} cx="120" cy="120" r="110" />
             <circle
-              className={`timer-ring-progress ${mode === 'break' ? 'break' : ''}`}
+              className={`${styles.timerRingProgress} ${mode === 'break' ? styles.break : ''}`}
               cx="120"
               cy="120"
               r="110"
@@ -90,66 +94,66 @@ export function TimerScreen() {
               strokeDashoffset={dashOffset}
             />
           </svg>
-          <div className="timer-time-text">
-            <div className="timer-time">{formatTime(timeLeft)}</div>
-            <div className="timer-mode-label">
-              {status === 'running' && <span className="running-indicator" style={{ marginRight: 6 }} />}
+          <div className={styles.timerTimeText}>
+            <div className={styles.timerTime}>{formatTime(timeLeft)}</div>
+            <div className={styles.timerModeLabel}>
+              {status === 'running' && <span className={`${shared.runningIndicator} ${styles.runningDot}`} />}
               {mode === 'focus' ? '집중' : '휴식'} 시간
             </div>
           </div>
         </div>
 
         {/* Controls */}
-        <div className="timer-controls">
-          <button className="btn btn-icon" onClick={reset} aria-label="초기화">
+        <div className={styles.timerControls}>
+          <button type="button" className={`${shared.btn} ${shared.btnIcon}`} onClick={reset} aria-label="초기화">
             ↺
           </button>
           {status === 'running' ? (
-            <button className="btn btn-primary" onClick={pause}>
+            <button type="button" className={`${shared.btn} ${shared.btnPrimary}`} onClick={pause}>
               ⏸ 일시정지
             </button>
           ) : (
-            <button className="btn btn-primary" onClick={start}>
+            <button type="button" className={`${shared.btn} ${shared.btnPrimary}`} onClick={start}>
               ▶ {status === 'paused' ? '계속' : '시작'}
             </button>
           )}
-          <button className="btn btn-icon" aria-label="설정" style={{ opacity: 0.3, cursor: 'default' }}>
+          <button type="button" className={`${shared.btn} ${shared.btnIcon} ${styles.btnDisabled}`} aria-label="설정">
             ⚙
           </button>
         </div>
       </div>
 
       {/* Today's progress */}
-      <div className="card">
-        <div className="card-title">오늘의 집중</div>
-        <div style={{ display: 'flex', justifyContent: 'space-around', textAlign: 'center' }}>
+      <div className={shared.card}>
+        <div className={shared.cardTitle}>오늘의 집중</div>
+        <div className={styles.todaySummary}>
           <div>
-            <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--color-primary-light)' }}>
+            <div className={`${styles.summaryNumber} ${styles.summaryNumberPrimary}`}>
               {completedToday}
             </div>
-            <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4 }}>완료 세션</div>
+            <div className={styles.summaryLabel}>완료 세션</div>
           </div>
           <div>
-            <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--color-secondary)' }}>
+            <div className={`${styles.summaryNumber} ${styles.summaryNumberSecondary}`}>
               {completedToday * 25}
             </div>
-            <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4 }}>분 집중</div>
+            <div className={styles.summaryLabel}>분 집중</div>
           </div>
           <div>
-            <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--color-success)' }}>
+            <div className={`${styles.summaryNumber} ${styles.summaryNumberSuccess}`}>
               {completedToday * 5}
             </div>
-            <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4 }}>분 휴식</div>
+            <div className={styles.summaryLabel}>분 휴식</div>
           </div>
         </div>
 
         {completedToday > 0 && (
-          <div className="pomodoro-dots" style={{ marginTop: 16 }}>
+          <div className={`${shared.pomodoroDots} ${styles.dotsRow}`}>
             {Array.from({ length: Math.min(completedToday, 8) }).map((_, i) => (
-              <div key={i} className="pomodoro-dot completed" />
+              <div key={i} className={`${shared.pomodoroDot} ${shared.completed}`} />
             ))}
             {completedToday < 8 && (
-              <div className="pomodoro-dot" />
+              <div className={shared.pomodoroDot} />
             )}
           </div>
         )}

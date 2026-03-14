@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { AdMob, AdOptions, InterstitialAdPluginEvents } from '@capacitor-community/admob'
 import { useAppStore } from '../store/appStore'
+import styles from './InterstitialAd.module.css'
 
 const INTERSTITIAL_AD_ID = {
   android: import.meta.env.VITE_ADMOB_INTERSTITIAL_ID_ANDROID ?? 'ca-app-pub-3940256099942544/1033173712', // test ID
@@ -70,15 +71,15 @@ export function InterstitialAd() {
   if (isNative || !showInterstitial) return null
 
   return (
-    <div className="interstitial-overlay" onClick={dismissInterstitial}>
-      <div className="interstitial-card" onClick={(e) => e.stopPropagation()}>
-        <div className="interstitial-label">광고</div>
-        <div className="interstitial-ad-area">
+    <div className={styles.interstitialOverlay} onClick={dismissInterstitial}>
+      <div className={styles.interstitialCard} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.interstitialLabel}>광고</div>
+        <div className={styles.interstitialAdArea}>
           AdMob Interstitial Ad
           <br />
-          <span className="interstitial-ad-subtext">(전면 광고 영역)</span>
+          <span className={styles.interstitialAdSubtext}>(전면 광고 영역)</span>
         </div>
-        <button type="button" className="interstitial-close" onClick={dismissInterstitial}>
+        <button type="button" className={styles.interstitialClose} onClick={dismissInterstitial}>
           닫기
         </button>
       </div>

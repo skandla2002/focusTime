@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { AdMob, BannerAdOptions, BannerAdSize, BannerAdPosition } from '@capacitor-community/admob'
+import styles from './BannerAd.module.css'
 
 const BANNER_AD_ID = {
   android: import.meta.env.VITE_ADMOB_BANNER_ID_ANDROID ?? 'ca-app-pub-3940256099942544/6300978111', // test ID
@@ -40,7 +41,7 @@ export function BannerAd() {
   if (isNative) return null
 
   return (
-    <div className="banner-ad" aria-label="Advertisement">
+    <div className={styles.bannerAd} aria-label="Advertisement">
       광고 영역 (AdMob Banner)
     </div>
   )

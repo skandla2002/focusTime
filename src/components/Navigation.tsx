@@ -1,4 +1,5 @@
 import type { Screen } from '../types'
+import styles from './Navigation.module.css'
 
 interface NavItem {
   screen: Screen
@@ -20,16 +21,17 @@ interface Props {
 
 export function Navigation({ current, onNavigate }: Props) {
   return (
-    <nav className="nav" role="navigation" aria-label="주 메뉴">
+    <nav className={styles.nav} role="navigation" aria-label="주 메뉴">
       {NAV_ITEMS.map(({ screen, icon, label }) => (
         <button
           key={screen}
-          className={`nav-item ${current === screen ? 'active' : ''}`}
+          type="button"
+          className={`${styles.navItem} ${current === screen ? styles.active : ''}`}
           onClick={() => onNavigate(screen)}
           aria-label={label}
           aria-current={current === screen ? 'page' : undefined}
         >
-          <span className="nav-icon">{icon}</span>
+          <span className={styles.navIcon}>{icon}</span>
           {label}
         </button>
       ))}

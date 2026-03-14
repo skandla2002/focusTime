@@ -2,7 +2,7 @@ import * as Sentry from '@sentry/react'
 import { Capacitor } from '@capacitor/core'
 import { App as CapApp } from '@capacitor/app'
 import { useEffect } from 'react'
-import './App.css'
+import styles from './App.module.css'
 import { BannerAd } from './components/BannerAd'
 import { InterstitialAd } from './components/InterstitialAd'
 import { Navigation } from './components/Navigation'
@@ -52,7 +52,7 @@ function AppContent() {
   const isLoginScreen = screen === 'login'
 
   return (
-    <div className="app">
+    <div className={styles.app}>
       {screen === 'login' && <LoginScreen />}
       {screen === 'home' && <HomeScreen />}
       {screen === 'timer' && <TimerScreen />}
@@ -68,11 +68,11 @@ function AppContent() {
 
 function ErrorFallback() {
   return (
-    <div className="app">
+    <div className={styles.app}>
       <div className="screen">
         <div className="card">
           <div className="card-title">App Error</div>
-          <div className="error-fallback-body">
+          <div className={styles.errorFallbackBody}>
             Something unexpected happened. Restart the app and try again.
           </div>
         </div>

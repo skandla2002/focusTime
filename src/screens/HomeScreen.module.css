@@ -1,0 +1,102 @@
+.streak-badge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, rgba(108, 99, 255, 0.18), rgba(79, 195, 247, 0.12));
+  border: 1px solid rgba(139, 133, 255, 0.35);
+  border-radius: 18px;
+  padding: 16px 18px;
+  margin-bottom: 12px;
+}
+
+.streak-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.streak-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: #fff2c6;
+  margin-top: 6px;
+}
+
+.streak-meta {
+  font-size: 13px;
+  color: var(--text-primary);
+  background: rgba(15, 15, 35, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  padding: 8px 12px;
+}
+
+.toast-card {
+  background: rgba(76, 175, 80, 0.14);
+  border: 1px solid rgba(76, 175, 80, 0.32);
+  border-radius: 16px;
+  padding: 16px 18px;
+  margin-bottom: 12px;
+}
+
+.toast-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: #b4ffb8;
+}
+
+.toast-copy {
+  font-size: 14px;
+  color: var(--text-primary);
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+.today-time {
+  font-size: 42px;
+  font-weight: 800;
+  color: var(--color-primary-light);
+  line-height: 1;
+}
+
+.today-time-unit {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.running-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--color-success);
+}
+
+.quick-start-card {
+  text-align: center;
+}
+
+.quick-start-desc {
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.quick-start-btn {
+  width: 100%;
+  max-width: 240px;
+}
+
+.sessions-today {
+  margin-top: 16px;
+}
+
+.sessions-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}

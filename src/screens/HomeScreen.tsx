@@ -6,6 +6,8 @@ import { useStreakStore } from '../store/streakStore'
 import { useStudyStore } from '../store/studyStore'
 import { useTimerStore } from '../store/timerStore'
 import { formatMinutes } from '../utils/time'
+import shared from '../styles/shared.module.css'
+import styles from './HomeScreen.module.css'
 
 export function HomeScreen() {
   const { records, getTodayMinutes, getWeekData, getTotalMinutes } = useStudyStore()
@@ -50,91 +52,91 @@ export function HomeScreen() {
         : 'Close the day with one more solid session.'
 
   return (
-    <div className="screen">
-      <div className="header">
+    <div className={shared.screen}>
+      <div className={shared.header}>
         <div>
-          <div className="header-title">FocusTimer</div>
-          <div className="header-subtitle">{greeting}</div>
+          <div className={shared.headerTitle}>FocusTimer</div>
+          <div className={shared.headerSubtitle}>{greeting}</div>
         </div>
         {status === 'running' && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--color-success)' }}>
-            <span className="running-indicator" />
+          <div className={styles.runningStatus}>
+            <span className={shared.runningIndicator} />
             In focus mode
           </div>
         )}
       </div>
 
-      <div className="streak-badge">
+      <div className={styles.streakBadge}>
         <div>
-          <div className="streak-label">Current streak</div>
-          <div className="streak-value">🔥 {currentStreak} day{currentStreak === 1 ? '' : 's'}</div>
+          <div className={styles.streakLabel}>Current streak</div>
+          <div className={styles.streakValue}>🔥 {currentStreak} day{currentStreak === 1 ? '' : 's'}</div>
         </div>
-        <div className="streak-meta">Best {longestStreak} day{longestStreak === 1 ? '' : 's'}</div>
+        <div className={styles.streakMeta}>Best {longestStreak} day{longestStreak === 1 ? '' : 's'}</div>
       </div>
 
       {celebrationMessage && (
-        <div className="toast-card">
-          <div className="toast-title">Milestone reached</div>
-          <div className="toast-copy">{celebrationMessage}</div>
+        <div className={styles.toastCard}>
+          <div className={styles.toastTitle}>Milestone reached</div>
+          <div className={styles.toastCopy}>{celebrationMessage}</div>
         </div>
       )}
 
-      <div className="card">
-        <div className="card-title">Today's study time</div>
-        <div className="today-time">{todayMinutes}</div>
-        <div className="today-time-unit">minutes / goal {dailyGoalMinutes} minutes</div>
-        <div className="progress-bar">
-          <div className="progress-fill" style={{ width: `${goalProgress}%` }} />
+      <div className={shared.card}>
+        <div className={shared.cardTitle}>Today's study time</div>
+        <div className={styles.todayTime}>{todayMinutes}</div>
+        <div className={styles.todayTimeUnit}>minutes / goal {dailyGoalMinutes} minutes</div>
+        <div className={shared.progressBar}>
+          <div className={shared.progressFill} style={{ width: `${goalProgress}%` }} />
         </div>
-        <div className="progress-label">
+        <div className={shared.progressLabel}>
           <span>{goalProgress >= 100 ? 'Goal achieved.' : `${Math.round(goalProgress)}% complete`}</span>
           <span>{formatMinutes(Math.max(dailyGoalMinutes - todayMinutes, 0))} remaining</span>
         </div>
       </div>
 
-      <div className="card" style={{ textAlign: 'center' }}>
-        <div className="card-title">Quick start</div>
-        <div style={{ marginBottom: 16, color: 'var(--text-secondary)', fontSize: 14 }}>
+      <div className={`${shared.card} ${styles.quickStartCard}`}>
+        <div className={shared.cardTitle}>Quick start</div>
+        <div className={styles.quickStartDesc}>
           {mode === 'focus' ? 'Focus session: 25 minutes' : 'Break session: 5 minutes'}
         </div>
         <button
-          className="btn btn-primary"
+          type="button"
+          className={`${shared.btn} ${shared.btnPrimary} ${styles.quickStartBtn}`}
           onClick={() => navigate('timer')}
-          style={{ width: '100%', maxWidth: 240 }}
         >
           {status === 'running' ? 'View timer' : status === 'paused' ? 'Resume timer' : 'Start timer'}
         </button>
         {completedToday > 0 && (
-          <div style={{ marginTop: 16 }}>
-            <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 8 }}>
+          <div className={styles.sessionsToday}>
+            <div className={styles.sessionsLabel}>
               Completed sessions today
             </div>
-            <div className="pomodoro-dots">
+            <div className={shared.pomodoroDots}>
               {Array.from({ length: Math.min(completedToday, 8) }).map((_, index) => (
-                <div key={index} className="pomodoro-dot completed" />
+                <div key={index} className={`${shared.pomodoroDot} ${shared.completed}`} />
               ))}
             </div>
           </div>
         )}
       </div>
 
-      <div className="card">
-        <div className="card-title">Weekly summary</div>
-        <div className="stat-row">
-          <span className="stat-label">Weekly total</span>
-          <span className="stat-value accent">{formatMinutes(weekTotal)}</span>
+      <div className={shared.card}>
+        <div className={shared.cardTitle}>Weekly summary</div>
+        <div className={shared.statRow}>
+          <span className={shared.statLabel}>Weekly total</span>
+          <span className={`${shared.statValue} ${shared.accent}`}>{formatMinutes(weekTotal)}</span>
         </div>
-        <div className="stat-row">
-          <span className="stat-label">Daily average</span>
-          <span className="stat-value">{formatMinutes(weekAverage)}</span>
+        <div className={shared.statRow}>
+          <span className={shared.statLabel}>Daily average</span>
+          <span className={shared.statValue}>{formatMinutes(weekAverage)}</span>
         </div>
-        <div className="stat-row">
-          <span className="stat-label">All-time total</span>
-          <span className="stat-value">{formatMinutes(totalMinutes)}</span>
+        <div className={shared.statRow}>
+          <span className={shared.statLabel}>All-time total</span>
+          <span className={shared.statValue}>{formatMinutes(totalMinutes)}</span>
         </div>
-        <div className="stat-row">
-          <span className="stat-label">Today's sessions</span>
-          <span className="stat-value">{completedToday}</span>
+        <div className={shared.statRow}>
+          <span className={shared.statLabel}>Today's sessions</span>
+          <span className={shared.statValue}>{completedToday}</span>
         </div>
       </div>
 
