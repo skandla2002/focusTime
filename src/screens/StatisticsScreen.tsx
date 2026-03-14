@@ -18,6 +18,8 @@ import { useStudyStore } from '../store/studyStore'
 import { trackEvent } from '../utils/analytics'
 import { shareStudyResult } from '../utils/share'
 import { formatDate, formatMinutes, getDayLabel } from '../utils/time'
+import shared from '../styles/shared.module.css'
+import styles from './StatisticsScreen.module.css'
 
 ChartJS.register(
   CategoryScale,
@@ -157,78 +159,70 @@ export function StatisticsScreen() {
   }
 
   return (
-    <div className="screen">
-      <div className="header">
-        <div className="header-title">Statistics</div>
+    <div className={shared.screen}>
+      <div className={shared.header}>
+        <div className={shared.headerTitle}>Statistics</div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
-        <div className="card" style={{ margin: 0 }}>
-          <div className="card-title">Today</div>
-          <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--color-primary-light)' }}>
-            {todayMinutes}
-          </div>
-          <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>min</div>
+      <div className={styles.statsGrid}>
+        <div className={`${shared.card} ${styles.gridCard}`}>
+          <div className={shared.cardTitle}>Today</div>
+          <div className={`${styles.gridNumber} ${styles.gridNumberPrimary}`}>{todayMinutes}</div>
+          <div className={styles.gridUnit}>min</div>
         </div>
-        <div className="card" style={{ margin: 0 }}>
-          <div className="card-title">This Week</div>
-          <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--color-secondary)' }}>
-            {weekTotal}
-          </div>
-          <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>min</div>
+        <div className={`${shared.card} ${styles.gridCard}`}>
+          <div className={shared.cardTitle}>This Week</div>
+          <div className={`${styles.gridNumber} ${styles.gridNumberSecondary}`}>{weekTotal}</div>
+          <div className={styles.gridUnit}>min</div>
         </div>
-        <div className="card" style={{ margin: 0 }}>
-          <div className="card-title">This Month</div>
-          <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--color-success)' }}>
-            {monthTotal}
-          </div>
-          <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>min</div>
+        <div className={`${shared.card} ${styles.gridCard}`}>
+          <div className={shared.cardTitle}>This Month</div>
+          <div className={`${styles.gridNumber} ${styles.gridNumberSuccess}`}>{monthTotal}</div>
+          <div className={styles.gridUnit}>min</div>
         </div>
-        <div className="card" style={{ margin: 0 }}>
-          <div className="card-title">Total</div>
-          <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--color-warning)' }}>
-            {totalMinutes}
-          </div>
-          <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>min</div>
+        <div className={`${shared.card} ${styles.gridCard}`}>
+          <div className={shared.cardTitle}>Total</div>
+          <div className={`${styles.gridNumber} ${styles.gridNumberWarning}`}>{totalMinutes}</div>
+          <div className={styles.gridUnit}>min</div>
         </div>
       </div>
 
-      <div className="card">
-        <div className="chart-title">Weekly focus time</div>
+      <div className={shared.card}>
+        <div className={styles.chartTitle}>Weekly focus time</div>
         {weekTotal > 0 ? (
-          <div className="chart-container">
+          <div className={styles.chartContainer}>
             <Bar data={weekChartData} options={CHART_OPTIONS as never} />
           </div>
         ) : (
-          <div className="empty-state">
-            <div className="empty-state-icon">+</div>
-            <div className="empty-state-text">
+          <div className={shared.emptyState}>
+            <div className={shared.emptyStateIcon}>+</div>
+            <div className={shared.emptyStateText}>
               No study history yet.
               <br />
               Start a timer to build your first chart.
             </div>
           </div>
         )}
-        <div style={{ marginTop: 12, display: 'flex', gap: 16, justifyContent: 'center', fontSize: 13 }}>
-          <span style={{ color: 'var(--text-secondary)' }}>
-            Active days <strong style={{ color: 'var(--text-primary)' }}>{activeDays}</strong>
+        <div className={styles.chartMeta}>
+          <span className={styles.chartMetaItem}>
+            Active days <strong className={styles.chartMetaValue}>{activeDays}</strong>
           </span>
-          <span style={{ color: 'var(--text-secondary)' }}>
-            Best day <strong style={{ color: 'var(--text-primary)' }}>{formatMinutes(maxDay.minutes)}</strong>
+          <span className={styles.chartMetaItem}>
+            Best day <strong className={styles.chartMetaValue}>{formatMinutes(maxDay.minutes)}</strong>
           </span>
         </div>
       </div>
 
-      <div className="card">
-        <div className="chart-title">30-day trend</div>
+      <div className={shared.card}>
+        <div className={styles.chartTitle}>30-day trend</div>
         {monthTotal > 0 ? (
-          <div className="chart-container">
+          <div className={styles.chartContainer}>
             <Line data={monthChartData} options={CHART_OPTIONS as never} />
           </div>
         ) : (
-          <div className="empty-state">
-            <div className="empty-state-icon">~</div>
-            <div className="empty-state-text">
+          <div className={shared.emptyState}>
+            <div className={shared.emptyStateIcon}>~</div>
+            <div className={shared.emptyStateText}>
               More study history is needed
               <br />
               before the monthly trend can appear.
@@ -237,36 +231,36 @@ export function StatisticsScreen() {
         )}
       </div>
 
-      <div className="card">
-        <div className="card-title">Details</div>
-        <div className="stat-row">
-          <span className="stat-label">Weekly average</span>
-          <span className="stat-value">{formatMinutes(Math.round(weekTotal / 7))}</span>
+      <div className={shared.card}>
+        <div className={shared.cardTitle}>Details</div>
+        <div className={shared.statRow}>
+          <span className={shared.statLabel}>Weekly average</span>
+          <span className={shared.statValue}>{formatMinutes(Math.round(weekTotal / 7))}</span>
         </div>
-        <div className="stat-row">
-          <span className="stat-label">Active days</span>
-          <span className="stat-value">{activeDays} / 7</span>
+        <div className={shared.statRow}>
+          <span className={shared.statLabel}>Active days</span>
+          <span className={shared.statValue}>{activeDays} / 7</span>
         </div>
-        <div className="stat-row">
-          <span className="stat-label">Monthly total</span>
-          <span className="stat-value accent">{formatMinutes(monthTotal)}</span>
+        <div className={shared.statRow}>
+          <span className={shared.statLabel}>Monthly total</span>
+          <span className={`${shared.statValue} ${shared.accent}`}>{formatMinutes(monthTotal)}</span>
         </div>
-        <div className="stat-row">
-          <span className="stat-label">Total focus time</span>
-          <span className="stat-value accent">{formatMinutes(totalMinutes)}</span>
+        <div className={shared.statRow}>
+          <span className={shared.statLabel}>Total focus time</span>
+          <span className={`${shared.statValue} ${shared.accent}`}>{formatMinutes(totalMinutes)}</span>
         </div>
       </div>
 
-      <div className="card" style={{ textAlign: 'center' }}>
-        <div className="card-title">Share result</div>
-        <div style={{ color: 'var(--text-secondary)', fontSize: 14, marginBottom: 16 }}>
+      <div className={`${shared.card} ${styles.shareCard}`}>
+        <div className={shared.cardTitle}>Share result</div>
+        <div className={styles.shareDesc}>
           Share today's progress with the system share sheet, or copy it when sharing is unavailable.
         </div>
-        <button className="btn btn-primary" onClick={handleShare} style={{ width: '100%' }}>
+        <button type="button" className={`${shared.btn} ${shared.btnPrimary} ${styles.shareBtn}`} onClick={handleShare}>
           Share My Result
         </button>
         {shareFeedback && (
-          <div style={{ marginTop: 12, color: 'var(--color-success)', fontSize: 13 }}>
+          <div className={styles.shareFeedback}>
             {shareFeedback}
           </div>
         )}

@@ -52,3 +52,59 @@
   text-align: center;
   margin: 16px 0;
 }
+
+.goal-slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Coach card */
+.coach-card {
+  background: rgba(108, 99, 255, 0.08);
+  border-color: rgba(108, 99, 255, 0.3);
+}
+
+.coach-card-title {
+  color: var(--color-primary-light);
+}
+
+.coach-text {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* Save button row */
+.save-row {
+  padding: 8px 0;
+}
+
+.save-btn {
+  width: 100%;
+  border-radius: 16px;
+}
+
+/* Pomodoro guide */
+.guide-text {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.guide-row {
+  margin-bottom: 8px;
+}
+
+.guide-emphasis {
+  color: var(--text-primary);
+}
+
+.guide-session-count {
+  margin-top: 8px;
+}
+
+.guide-session-emphasis {
+  color: var(--color-primary-light);
+}

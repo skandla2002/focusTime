@@ -10,3 +10,78 @@
   height: 180px;
   width: 100%;
 }
+
+.chart-meta {
+  margin-top: 12px;
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  font-size: 13px;
+}
+
+.chart-meta-item {
+  color: var(--text-secondary);
+}
+
+.chart-meta-value {
+  color: var(--text-primary);
+}
+
+/* Stats grid (2x2) */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.grid-card {
+  margin: 0;
+}
+
+.grid-number {
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.grid-number-primary {
+  color: var(--color-primary-light);
+}
+
+.grid-number-secondary {
+  color: var(--color-secondary);
+}
+
+.grid-number-success {
+  color: var(--color-success);
+}
+
+.grid-number-warning {
+  color: var(--color-warning);
+}
+
+.grid-unit {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* Share card */
+.share-card {
+  text-align: center;
+}
+
+.share-desc {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.share-btn {
+  width: 100%;
+}
+
+.share-feedback {
+  margin-top: 12px;
+  color: var(--color-success);
+  font-size: 13px;
+}

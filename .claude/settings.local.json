@@ -4,7 +4,11 @@
       "Bash(git push -u origin main)",
       "Bash(npm install:*)",
       "Bash(npm run:*)",
-      "Bash(npx cap:*)"
+      "Bash(npx cap:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm remove:*)",
+      "Bash(pnpm typecheck:*)",
+      "Bash(pnpm build:*)"
     ]
   }
 }

@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { signInWithGoogle } from '../utils/cloudStorage'
 import { useAppStore } from '../store/appStore'
+import shared from '../styles/shared.module.css'
+import styles from './LoginScreen.module.css'
 
 export function LoginScreen() {
   const { navigate } = useAppStore()
@@ -25,35 +27,35 @@ export function LoginScreen() {
   }
 
   return (
-    <div className="screen login-screen">
-      <div className="login-hero">
-        <div className="login-icon">⏱</div>
-        <h1 className="login-title">FocusTimer</h1>
-        <p className="login-subtitle">집중 기록을 클라우드에 저장하고{'\n'}어느 기기에서든 이어서 공부하세요.</p>
+    <div className={`${shared.screen} ${styles.loginScreen}`}>
+      <div className={styles.loginHero}>
+        <div className={styles.loginIcon}>⏱</div>
+        <h1 className={styles.loginTitle}>FocusTimer</h1>
+        <p className={styles.loginSubtitle}>집중 기록을 클라우드에 저장하고{'\n'}어느 기기에서든 이어서 공부하세요.</p>
       </div>
 
-      <div className="login-actions">
+      <div className={styles.loginActions}>
         <button
           type="button"
-          className="btn-google"
+          className={styles.btnGoogle}
           onClick={handleGoogleLogin}
           disabled={loading}
         >
-          <span className="btn-google-icon">G</span>
+          <span className={styles.btnGoogleIcon}>G</span>
           {loading ? '로그인 중...' : 'Google로 계속하기'}
         </button>
 
-        {error && <p className="login-error">{error}</p>}
+        {error && <p className={styles.loginError}>{error}</p>}
 
         <button
           type="button"
-          className="btn-skip"
+          className={styles.btnSkip}
           onClick={handleSkip}
         >
           로그인 없이 시작하기
         </button>
 
-        <p className="login-notice">
+        <p className={styles.loginNotice}>
           로그인하지 않으면 데이터가 이 기기에만 저장됩니다.
         </p>
       </div>
