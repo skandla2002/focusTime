@@ -8,6 +8,7 @@ import {
   getLast7Days,
   getLast30Days,
 } from '../utils/storage'
+import { useStreakStore } from './streakStore'
 
 interface StudyState {
   records: StudyRecord[]
@@ -25,6 +26,7 @@ export const useStudyStore = create<StudyState>((set, get) => ({
     const { records } = get()
     const updated = addSessionToRecords(records, session)
     saveRecords(updated)
+    useStreakStore.getState().syncFromRecords(updated)
     set({ records: updated })
   },
 

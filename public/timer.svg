@@ -1,7 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
-  <circle cx="16" cy="18" r="12" fill="#6c63ff"/>
-  <circle cx="16" cy="18" r="9" fill="#0f0f23"/>
-  <line x1="16" y1="18" x2="16" y2="11" stroke="#6c63ff" stroke-width="2" stroke-linecap="round"/>
-  <line x1="16" y1="18" x2="20" y2="20" stroke="#4fc3f7" stroke-width="2" stroke-linecap="round"/>
-  <rect x="13" y="4" width="6" height="3" rx="1.5" fill="#6c63ff"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="timerFace" x1="96" y1="64" x2="416" y2="448" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8B85FF" />
+      <stop offset="1" stop-color="#4FC3F7" />
+    </linearGradient>
+    <linearGradient id="timerGlow" x1="160" y1="96" x2="416" y2="416" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6C63FF" stop-opacity="0.8" />
+      <stop offset="1" stop-color="#6C63FF" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="128" fill="#0F0F23" />
+  <circle cx="256" cy="288" r="170" fill="url(#timerGlow)" />
+  <circle cx="256" cy="288" r="154" fill="#171732" stroke="url(#timerFace)" stroke-width="24" />
+  <path d="M256 138C233 138 214 119 214 96C214 73 233 54 256 54C279 54 298 73 298 96C298 119 279 138 256 138Z" fill="#6C63FF" />
+  <rect x="192" y="74" width="128" height="36" rx="18" fill="#23234A" />
+  <path d="M256 288L256 190" stroke="#F6F7FB" stroke-width="22" stroke-linecap="round" />
+  <path d="M256 288L332 332" stroke="#4FC3F7" stroke-width="18" stroke-linecap="round" />
+  <circle cx="256" cy="288" r="18" fill="#F6F7FB" />
+  <path d="M167 185L142 160" stroke="#6C63FF" stroke-width="18" stroke-linecap="round" />
+  <path d="M345 185L370 160" stroke="#6C63FF" stroke-width="18" stroke-linecap="round" />
 </svg>

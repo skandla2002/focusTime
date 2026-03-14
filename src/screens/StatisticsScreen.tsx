@@ -13,10 +13,11 @@ import {
 } from 'chart.js'
 import type { TooltipItem } from 'chart.js'
 import { Bar, Line } from 'react-chartjs-2'
-import { useStudyStore } from '../store/studyStore'
 import { useAppStore } from '../store/appStore'
-import { formatMinutes, formatDate, getDayLabel } from '../utils/time'
+import { useStudyStore } from '../store/studyStore'
+import { trackEvent } from '../utils/analytics'
 import { shareStudyResult } from '../utils/share'
+import { formatDate, formatMinutes, getDayLabel } from '../utils/time'
 
 ChartJS.register(
   CategoryScale,
@@ -37,7 +38,7 @@ const CHART_OPTIONS = {
     legend: { display: false },
     tooltip: {
       callbacks: {
-        label: (ctx: TooltipItem<'bar' | 'line'>) => `${ctx.parsed.y} min`,
+        label: (context: TooltipItem<'bar' | 'line'>) => `${context.parsed.y} min`,
       },
     },
   },
@@ -94,7 +95,7 @@ export function StatisticsScreen() {
   const monthTotal = monthData.reduce((sum, day) => sum + day.minutes, 0)
   const maxDay = weekData.reduce(
     (best, day) => (day.minutes > best.minutes ? day : best),
-    weekData[0]
+    weekData[0] ?? { date: todayKey, minutes: 0 }
   )
 
   const weekChartData = {
@@ -130,19 +131,25 @@ export function StatisticsScreen() {
   }
 
   async function handleShare() {
-    const text = `Today I completed ${todayMinutes} focused minutes across ${todaySessions} sessions! #FocusTimer`
+    const shareText = `Today I completed ${todayMinutes} focused minutes across ${todaySessions} sessions! #FocusTimer`
 
     try {
       const result = await shareStudyResult({
         title: 'FocusTimer study result',
-        text,
+        text: shareText,
         url: window.location.href,
+      })
+
+      await trackEvent('share_result', {
+        method: result,
+        today_minutes: todayMinutes,
+        today_sessions: todaySessions,
       })
 
       setShareFeedback(
         result === 'shared'
           ? 'Share sheet opened.'
-          : 'Share is unavailable here, so the result was copied.'
+          : 'Sharing is not supported here, so the result was copied.'
       )
     } catch {
       setShareFeedback('This device cannot share the result right now.')
@@ -187,7 +194,7 @@ export function StatisticsScreen() {
       </div>
 
       <div className="card">
-        <div className="chart-title">Weekly Focus Time</div>
+        <div className="chart-title">Weekly focus time</div>
         {weekTotal > 0 ? (
           <div className="chart-container">
             <Bar data={weekChartData} options={CHART_OPTIONS as never} />
@@ -198,7 +205,7 @@ export function StatisticsScreen() {
             <div className="empty-state-text">
               No study history yet.
               <br />
-              Start a timer to build your first stats.
+              Start a timer to build your first chart.
             </div>
           </div>
         )}
@@ -207,13 +214,13 @@ export function StatisticsScreen() {
             Active days <strong style={{ color: 'var(--text-primary)' }}>{activeDays}</strong>
           </span>
           <span style={{ color: 'var(--text-secondary)' }}>
-            Best day <strong style={{ color: 'var(--text-primary)' }}>{formatMinutes(maxDay?.minutes ?? 0)}</strong>
+            Best day <strong style={{ color: 'var(--text-primary)' }}>{formatMinutes(maxDay.minutes)}</strong>
           </span>
         </div>
       </div>
 
       <div className="card">
-        <div className="chart-title">30-Day Trend</div>
+        <div className="chart-title">30-day trend</div>
         {monthTotal > 0 ? (
           <div className="chart-container">
             <Line data={monthChartData} options={CHART_OPTIONS as never} />
@@ -251,9 +258,9 @@ export function StatisticsScreen() {
       </div>
 
       <div className="card" style={{ textAlign: 'center' }}>
-        <div className="card-title">Share Result</div>
+        <div className="card-title">Share result</div>
         <div style={{ color: 'var(--text-secondary)', fontSize: 14, marginBottom: 16 }}>
-          Share today's progress with the system share sheet, or copy the result if sharing is not supported.
+          Share today's progress with the system share sheet, or copy it when sharing is unavailable.
         </div>
         <button className="btn btn-primary" onClick={handleShare} style={{ width: '100%' }}>
           Share My Result
