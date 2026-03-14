@@ -1,97 +1,87 @@
 # System Overview
 
-> AI가 "프로젝트 분석해줘" 요청 시 작성합니다.
-> 분석 대상: 프로젝트 소스 코드 (.workflowSvc/ai/, .workflowSvc/workflow/, .workflowSvc/docs/, CLAUDE.md, AGENTS.md 제외)
-> 작성 후 매 세션 시작 시 참조하여 문제 분석·해결에 활용합니다.
+> This document summarizes the live FocusTimer application codebase.
 
 ---
 
-## 분석 일자
+## Analysis Date
 
-<!-- YYYY-MM-DD -->
-예시: `2026-03-05`
+2026-03-14
 
-## 기술 스택
+## Technical Stack
 
-<!-- 언어, 프레임워크, 주요 라이브러리 -->
+- React 18
+- TypeScript 5
+- Vite 5
+- Zustand 4
+- Chart.js 4 with `react-chartjs-2`
+- localStorage for persistence in the current MVP
 
-작성 가이드:
-
-- 런타임/언어: 예) Node.js 20, TypeScript 5.x
-- 프레임워크: 예) Express, Next.js, NestJS
-- 핵심 라이브러리: 예) ORM, 테스트 도구, 빌드 도구
-- 버전 고정이 중요한 항목은 함께 기입
-
-## 폴더 구조
+## Directory Shape
 
 ```text
-<!-- 프로젝트 주요 폴더/파일 트리 (템플릿 파일 제외) -->
+src/
+├── components/
+├── screens/
+├── store/
+├── types/
+└── utils/
 ```
 
-권장:
+## Main Modules
 
-- 깊이 2~3단계까지만 요약
-- 진입점 파일과 핵심 모듈 위치는 반드시 포함
-
-## 주요 모듈 / 역할
-
-<!-- 각 폴더·파일의 핵심 역할 요약 -->
-
-| 경로 | 역할 |
+| Path | Role |
 | ---- | ---- |
-| (분석 후 채움) | (분석 후 채움) |
+| `src/main.tsx` | Boots the React app and mounts `App` into `#root`. |
+| `src/App.tsx` | Switches between screens using `appStore` and keeps navigation plus interstitial UI mounted. |
+| `src/store/appStore.ts` | Manages the active screen and interstitial visibility. |
+| `src/store/timerStore.ts` | Manages Pomodoro mode, timer status, countdown state, and completed sessions. |
+| `src/store/studyStore.ts` | Aggregates study records, exposes day and range summaries, and persists them to localStorage. |
+| `src/store/goalStore.ts` | Persists and updates the daily study goal. |
+| `src/screens/TimerScreen.tsx` | Runs the countdown loop, records completed sessions, and triggers interstitial placeholders. |
+| `src/screens/StatisticsScreen.tsx` | Renders weekly and monthly study charts plus summary metrics. |
+| `src/utils/storage.ts` | Reads and writes study records and goals from localStorage. |
+| `src/components/BannerAd.tsx` | Renders the current banner placeholder for future AdMob integration. |
 
-권장:
+## Entry Points
 
-- 역할은 "명사 + 동사" 형태로 간결하게 작성
-- 경로는 실제 저장소 기준 상대 경로 사용
-- 5~10개 내 핵심 모듈만 우선 정리
+- App bootstrap: `src/main.tsx`
+- Root UI composition: `src/App.tsx`
+- Screen state entry: `useAppStore()` in `src/store/appStore.ts`
 
-## 진입점 (Entry Point)
+## Dependencies
 
-<!-- 앱 시작 파일, 메인 함수, API 라우터 등 -->
+- Runtime: `react`, `react-dom`, `zustand`, `chart.js`, `react-chartjs-2`
+- Tooling: `vite`, `typescript`, `@vitejs/plugin-react`
+- Planned tooling additions for workflow support: ESLint with TypeScript rules
 
-체크 포인트:
-
-- 실행 진입점: CLI 명령, 서버 bootstrap 파일
-- 요청 진입점: 라우터/컨트롤러 시작 위치
-- 배치/크론 진입점이 있으면 별도 명시
-
-## 외부 의존성
-
-<!-- package.json, requirements.txt 등 주요 의존성 -->
-
-체크 포인트:
-
-- 반드시 필요한 런타임 의존성
-- 운영/배포와 직접 연결되는 의존성
-- 교체 비용이 높은 핵심 라이브러리
-
-## 데이터 흐름
-
-<!-- 요청 → 처리 → 응답의 큰 흐름 (선택) -->
-
-권장 형식:
+## Data Flow
 
 ```text
-Client Request
-  -> Router / Controller
-  -> Service / UseCase
-  -> Repository / External API
-  -> Response + Logging
+User interaction
+  -> Screen component
+  -> Zustand store action
+  -> localStorage helper (study records / goals)
+  -> Store state update
+  -> UI rerender
 ```
 
-## 특이사항 / 주의점
+Timer completion follows a slightly richer path:
 
-<!-- 레거시 코드, 복잡한 로직, 알려진 제약 등 -->
+```text
+TimerScreen interval
+  -> timerStore.tick()
+  -> completed focus session returned
+  -> studyStore.addSession(session)
+  -> storage.ts saves updated records
+  -> appStore.triggerInterstitial()
+  -> App renders the interstitial placeholder
+```
 
-다음 항목을 우선 기록:
+## Constraints And Notes
 
-- 장애/버그가 반복되는 구간
-- 테스트가 부족한 핵심 경로
-- 성능 병목 구간 및 임시 우회 로직
-- 추후 개선 필요 항목(세부는 improvements.md로 연결)
-
----
-
-> 이 파일은 `.workflowSvc/docs/architecture/improvements.md`와 함께 읽으면 전체 컨텍스트를 파악할 수 있습니다.
+- AdMob is currently represented by placeholder components only; no native SDK is wired yet.
+- Capacitor configuration exists, but native packaging is not part of the current MVP implementation.
+- Persistence is localStorage-only in the current code. SQLite is still a later-phase concern.
+- The app uses store-driven screen switching instead of a router.
+- There are currently no dedicated unit test files in the repository.
