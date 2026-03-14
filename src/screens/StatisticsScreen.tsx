@@ -35,7 +35,6 @@ const CHART_OPTIONS = {
     legend: { display: false },
     tooltip: {
       callbacks: {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         label: (ctx: any) => `${ctx.parsed.y}분`,
       },
     },
@@ -50,7 +49,6 @@ const CHART_OPTIONS = {
       ticks: {
         color: '#9e9e9e',
         font: { size: 11 },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         callback: (v: any) => `${v}분`,
       },
       beginAtZero: true,

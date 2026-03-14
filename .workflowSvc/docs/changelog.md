@@ -1,32 +1,42 @@
 # Changelog
 
-사람이 읽는 버전별 변경 이력입니다.
-기술적 커밋 로그가 아닌, 기능/영향 중심으로 작성합니다.
+Track product-facing changes here rather than raw commit history.
 
-## 형식
+## Format
 
-```
-## [버전] - YYYY-MM-DD
+```text
+## [version] - YYYY-MM-DD
 
-### 추가
-- 새로운 기능
+### Added
+- New capability
 
-### 변경
-- 기존 동작 변경 사항
+### Changed
+- Updated behavior
 
-### 수정
-- 버그 수정
+### Fixed
+- Bug fix
 
-### 제거
-- 삭제된 기능
+### Removed
+- Removed capability
 
-### 보안
-- 보안 관련 수정
+### Security
+- Security-related update
 ```
 
 ---
 
 ## [Unreleased]
 
-### 추가
-- 프로젝트 초기 구조 설정
+### Changed
+- Clarified MVP versus Phase 2 documentation for mobile packaging, ads, and storage.
+
+## [0.1.0] - 2026-03-06
+
+### Added
+- Pomodoro timer flow with focus and break modes.
+- Home, timer, statistics, and goal screens.
+- Study session recording and aggregation with localStorage persistence.
+- Weekly bar chart and 30-day line chart statistics using Chart.js.
+- Daily study-goal management backed by a dedicated Zustand store.
+- Placeholder banner and interstitial AdMob components for future ad integration.
+- Zustand stores for app navigation, timer state, study records, and goals.

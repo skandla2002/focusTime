@@ -1,335 +1,163 @@
-# PRD --- Focus Study Timer App
+# PRD - FocusTimer
 
-**Version:** 0.1\
-**Type:** MVP\
-**Platform:** Android / iOS (PWA + Capacitor)\
-**Monetization:** Ads (AdMob)
+**Version:** 0.1  
+**Type:** MVP  
+**Primary Platforms:** Web MVP first, with later mobile packaging support  
+**Monetization:** Ad placeholders in MVP, native AdMob integration in a later phase
 
-------------------------------------------------------------------------
+---
 
-# 1. Product Overview
+## 1. Product Overview
 
-## Product Name (Working)
+FocusTimer is a study-focused Pomodoro app that helps users measure focus time,
+review their study history, and stay aligned to a daily goal.
 
-FocusTimer / StudyFlow / 집중타이머
+## 2. Target Users
 
-## Product Goal
+- Students who want a simple focus timer with progress tracking
+- Learners preparing for exams or certifications
+- Self-directed workers who want lightweight study-time analytics
 
-사용자가 **집중 공부 시간을 기록하고 관리할 수 있는 타이머 앱**을
-제공한다.
+## 3. Core Value Proposition
 
-핵심 목적 - 집중 공부 시간 측정 - 공부 습관 형성 - 통계 제공
+- Start a focused study session quickly
+- Keep a persistent record of completed study time
+- Review trends through simple charts
+- Stay accountable with a daily time goal
 
-비즈니스 목적 - 광고 기반 수익 - 사용자 확보 후 AI 기능 확장
+## 4. Core Features (MVP)
 
-------------------------------------------------------------------------
+### 4.1 Focus Timer
 
-# 2. Target Users
+- 25-minute focus sessions
+- 5-minute break sessions
+- Start, pause, reset, and automatic mode switching
 
-### Primary
+### 4.2 Study Time Record
 
-학생 (중학생 \~ 대학생)
+- Save completed focus sessions
+- Aggregate minutes by day
+- Retain study history in browser storage
 
-### Secondary
+### 4.3 Statistics Dashboard
 
--   자격증 공부 사용자
--   직장인 자기개발 사용자
+- Today's total study minutes
+- 7-day summary
+- 30-day trend view
 
-### User Pain Points
+### 4.4 Study Goal
 
-  문제                    설명
-  ----------------------- ----------------------------
-  집중 유지 어려움        공부 시작 후 집중이 깨짐
-  공부 시간 관리 어려움   실제 공부 시간 파악 어려움
-  동기 부족               목표 설정 및 기록 부족
+- Set a daily goal in minutes
+- Show progress toward that goal on the home screen
 
-------------------------------------------------------------------------
+## 5. Monetization
 
-# 3. Core Value Proposition
+### MVP
 
-앱은 다음 가치를 제공한다.
+- Banner and interstitial ad placeholders only
+- No native ad SDK shipping requirement
 
-1.  간단한 집중 타이머\
-2.  공부 시간 기록\
-3.  시각적 통계 제공\
-4.  목표 기반 동기 제공
+### Phase 2
 
-------------------------------------------------------------------------
+- Real Google AdMob SDK integration
+- Native ad lifecycle handling and production ad unit IDs
 
-# 4. Core Features (MVP)
+## 6. Screens
 
-## 4.1 Focus Timer
+- Home
+- Timer
+- Statistics
+- Goal settings
 
-Pomodoro 방식 타이머 (기본 25분 집중 / 5분 휴식)
+## 7. UX Flow
 
-사용 흐름
+```text
+Open app
+  -> Review today's progress
+  -> Start timer
+  -> Complete focus session
+  -> Save record
+  -> Review updated statistics
+```
 
-    타이머 시작
-    ↓
-    집중 시간 진행
-    ↓
-    완료 알림
-    ↓
-    기록 저장
+## 8. Data Storage
 
-데이터 구조
+### MVP
 
-    focusSession {
-     id
-     startTime
-     endTime
-     duration
-     date
-    }
+- localStorage for study records and goals
 
-기능
+### Phase 2
 
--   Start / Pause / Reset
--   타이머 진행 UI
--   알림
+- SQLite for richer offline persistence if native packaging requires it
+- Optional sync strategy can be evaluated later
 
-------------------------------------------------------------------------
+## 9. Technical Stack
 
-## 4.2 Study Time Record
+### MVP
 
-사용자가 공부 시간을 기록한다.
+- React
+- TypeScript
+- Vite
+- Zustand
+- Chart.js
+- localStorage
 
-화면
+### Phase 2
 
-    오늘 공부시간
-    주간 공부시간
-    월간 공부시간
+- Capacitor for native packaging
+- AdMob SDK for real ad delivery
+- SQLite for native-first persistence
 
-데이터 구조
+## 10. Future AI Features
 
-    studyRecord {
-     id
-     date
-     totalMinutes
-     sessions[]
-    }
+- Study coaching suggestions
+- Focus-pattern analysis
+- Personalized study-plan recommendations
 
-------------------------------------------------------------------------
+## 11. Success Metrics
 
-## 4.3 Statistics Dashboard
+- Daily active usage
+- Sessions completed per day
+- 7-day retention
+- Ad revenue after native ad rollout
 
-그래프 제공
+## 12. MVP Scope
 
-기능
+### Included In MVP
 
--   오늘 공부시간
--   주간 그래프
--   월간 그래프
+- Timer
+- Study record persistence
+- Statistics dashboard
+- Goal management
+- Placeholder banner and interstitial ad surfaces
 
-그래프 유형
+### Explicitly Out Of MVP
 
--   Bar Chart
--   Line Chart
+- User accounts and cloud sync
+- AI-driven recommendations
+- Native Capacitor packaging
+- Real AdMob SDK integration
+- SQLite persistence
 
-------------------------------------------------------------------------
+## 13. Development Timeline
 
-## 4.4 Study Goal
+- Week 1: core timer and home flow
+- Week 2: storage and statistics
+- Week 3: goals and ad placeholders
 
-사용자는 목표 공부 시간을 설정한다.
+## 14. Risks
 
-예
+- Users may drop off if progress feedback feels too shallow
+- Placeholder ad surfaces should not be mistaken for production monetization
+- localStorage-only persistence limits device portability
 
-    하루 목표: 2시간
+## 15. MVP Definition of Done
 
-데이터
+The MVP is complete when:
 
-    studyGoal {
-     dailyGoalMinutes
-    }
-
-------------------------------------------------------------------------
-
-# 5. Ad Monetization
-
-## Ad Network
-
-Google AdMob
-
-## Ad Placement
-
-### Banner Ad
-
-홈 화면 하단
-
-### Interstitial Ad
-
-노출 시점 - 타이머 완료 후 - 통계 화면 이동 시
-
-### Rewarded Ad (Optional)
-
-예: 광고 시청 후 추가 통계 기능 잠금 해제
-
-------------------------------------------------------------------------
-
-# 6. Screens
-
-## Home Screen
-
--   오늘 공부시간
--   타이머
--   Start 버튼
--   오늘 목표
-
-## Timer Screen
-
--   타이머 표시
--   Pause
--   Stop
-
-## Statistics Screen
-
--   주간 그래프
--   월간 그래프
--   총 공부시간
-
-## Goal Setting Screen
-
--   목표 시간 설정
-
-------------------------------------------------------------------------
-
-# 7. UX Flow
-
-    앱 실행
-    ↓
-    홈 화면
-    ↓
-    타이머 시작
-    ↓
-    집중
-    ↓
-    완료
-    ↓
-    기록 저장
-    ↓
-    광고 노출
-
-------------------------------------------------------------------------
-
-# 8. Data Storage
-
-초기 MVP - Local Storage / SQLite
-
-데이터
-
-    focusSession
-    studyRecord
-    studyGoal
-
-향후 - Cloud Sync
-
-------------------------------------------------------------------------
-
-# 9. Technical Stack
-
-Frontend
-
-    React
-    TypeScript
-    Vite
-    Zustand
-    Tailwind 또는 CSS
-
-Mobile
-
-    Capacitor
-
-Charts
-
-    Chart.js
-
-Ads
-
-    AdMob SDK
-
-Storage
-
-    SQLite / localStorage
-
-------------------------------------------------------------------------
-
-# 10. Future AI Features
-
-사용자 확보 후 추가
-
-### AI Study Coach
-
--   공부 패턴 분석
--   추천 공부 시간
--   시험 대비 계획
-
-### AI Weakness Analysis
-
--   집중 시간 분석
--   개인 맞춤 공부 루틴
-
-### AI Study Plan
-
--   시험 일정 기반 공부 계획 생성
-
-------------------------------------------------------------------------
-
-# 11. Success Metrics
-
-  지표                 목표
-  -------------------- ----------
-  Daily Active Users   500+
-  Session per day      3
-  Retention Day7       25%
-  Ad Revenue           \$3+ CPM
-
-------------------------------------------------------------------------
-
-# 12. MVP Scope
-
-포함 기능
-
-    Timer
-    Study Record
-    Statistics
-    Goal
-    Ads
-
-제외
-
-    로그인
-    클라우드
-    AI 기능
-
-------------------------------------------------------------------------
-
-# 13. Development Timeline
-
-Week 1 - UI - Timer 기능
-
-Week 2 - 기록 - 통계
-
-Week 3 - 광고 - 앱 패키징
-
-------------------------------------------------------------------------
-
-# 14. Risks
-
-  위험             대응
-  ---------------- -------------
-  광고 수익 낮음   사용자 증가
-  사용자 이탈      UX 단순화
-  경쟁 앱          차별 기능
-
-------------------------------------------------------------------------
-
-# 15. MVP Definition of Done
-
-다음 조건 충족 시 MVP 완료
-
-    타이머 작동
-    기록 저장
-    통계 표시
-    목표 설정
-    광고 표시
-    모바일 실행
+- The Pomodoro timer runs with focus and break modes
+- Completed focus sessions are saved locally
+- Statistics render from saved study records
+- Users can set and review a daily goal
+- Placeholder ad components exist in the UI
+- The app runs as a web MVP without requiring Capacitor, SQLite, or the AdMob SDK
