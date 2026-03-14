@@ -24,6 +24,13 @@ export type Screen = 'home' | 'timer' | 'statistics' | 'goal'
 export const FOCUS_DURATION = 25 * 60 // 25 minutes in seconds
 export const BREAK_DURATION = 5 * 60 // 5 minutes in seconds
 
+export interface AppUser {
+  id: string
+  email: string | null
+  displayName: string | null
+  avatarUrl: string | null
+}
+
 export interface StreakSnapshot {
   currentStreak: number
   longestStreak: number

@@ -1,19 +1,25 @@
 import { create } from 'zustand'
-import type { Screen } from '../types'
+import type { Screen, AppUser } from '../types'
+
+export type AppScreen = Screen | 'login'
 
 interface AppState {
-  screen: Screen
+  screen: AppScreen
   showInterstitial: boolean
-  navigate: (screen: Screen) => void
+  user: AppUser | null
+  // actions
+  navigate: (screen: AppScreen) => void
   triggerInterstitial: () => void
   dismissInterstitial: () => void
+  setUser: (user: AppUser | null) => void
 }
 
 export const useAppStore = create<AppState>((set) => ({
   screen: 'home',
   showInterstitial: false,
+  user: null,
 
-  navigate: (screen: Screen) => {
+  navigate: (screen: AppScreen) => {
     set({ screen })
   },
 
@@ -23,5 +29,9 @@ export const useAppStore = create<AppState>((set) => ({
 
   dismissInterstitial: () => {
     set({ showInterstitial: false })
+  },
+
+  setUser: (user: AppUser | null) => {
+    set({ user })
   },
 }))
