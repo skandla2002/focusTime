@@ -105,9 +105,9 @@ export const useTimerStore = create<TimerState>((set, get) => ({
       const nextMode: TimerMode = mode === 'focus' ? 'break' : 'focus'
       set({
         mode: nextMode,
-        status: 'idle',
+        status: 'running',
         timeLeft: getDurationForMode(nextMode),
-        sessionStart: null,
+        sessionStart: Date.now(),
         backgroundedAt: null,
         completedToday: mode === 'focus' ? completedToday + 1 : completedToday,
       })
@@ -142,11 +142,12 @@ export const useTimerStore = create<TimerState>((set, get) => ({
       }
 
       const nextMode: TimerMode = mode === 'focus' ? 'break' : 'focus'
+      const nextSessionStart = Date.now()
       set({
         mode: nextMode,
-        status: 'idle',
+        status: 'running',
         timeLeft: getDurationForMode(nextMode),
-        sessionStart: null,
+        sessionStart: nextSessionStart,
         backgroundedAt: null,
         completedToday: mode === 'focus' ? completedToday + 1 : completedToday,
       })

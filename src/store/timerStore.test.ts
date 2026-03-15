@@ -104,7 +104,10 @@ describe('timer store', () => {
 
     expect(session?.duration).toBeGreaterThanOrEqual(25)
     expect(useTimerStore.getState().mode).toBe('break')
+    expect(useTimerStore.getState().status).toBe('running')
+    expect(useTimerStore.getState().timeLeft).toBe(BREAK_DURATION)
     expect(useTimerStore.getState().completedToday).toBe(1)
+    expect(useTimerStore.getState().sessionStart).toBe(Date.now())
   })
 
   it('[timerStore] should switch back to focus without creating a session when a break timer completes', () => {
@@ -119,7 +122,10 @@ describe('timer store', () => {
 
     expect(session).toBeNull()
     expect(useTimerStore.getState().mode).toBe('focus')
+    expect(useTimerStore.getState().status).toBe('running')
+    expect(useTimerStore.getState().timeLeft).toBe(25 * 60)
     expect(useTimerStore.getState().completedToday).toBe(3)
+    expect(useTimerStore.getState().sessionStart).toBe(Date.now())
   })
 
   it('[timerStore] should store the background timestamp only when the timer is running', () => {
@@ -162,8 +168,10 @@ describe('timer store', () => {
 
     useTimerStore.getState().onForeground()
 
-    expect(useTimerStore.getState().status).toBe('idle')
+    expect(useTimerStore.getState().status).toBe('running')
     expect(useTimerStore.getState().mode).toBe('break')
+    expect(useTimerStore.getState().timeLeft).toBe(BREAK_DURATION)
     expect(useTimerStore.getState().completedToday).toBe(1)
+    expect(useTimerStore.getState().sessionStart).toBe(Date.now())
   })
 })
