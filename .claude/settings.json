@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(adb uninstall:*)",
+      "Bash(powershell.exe -Command \"Set-Location ''C:\\\\Study\\\\AI\\\\AIApps\\\\forcusTimer\\\\android''; .\\\\gradlew.bat assembleDebug 2>&1 | Select-String -Pattern ''BUILD|ERROR|error:''\")",
+      "Bash(powershell.exe -Command \"\\(Get-Item ''C:\\\\Study\\\\AI\\\\AIApps\\\\forcusTimer\\\\android\\\\app\\\\build\\\\outputs\\\\apk\\\\debug\\\\app-debug.apk''\\).LastWriteTime\")"
+    ]
+  }
+}
