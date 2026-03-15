@@ -10,7 +10,7 @@ const config: CapacitorConfig = {
   plugins: {
     AdMob: {
       appId: {
-        android: 'ca-app-pub-3940256099942544~3347511713', // 테스트용 — 실제 출시 전 교체
+        android: 'ca-app-pub-3940256099942544~3347511713', // 테스트용 — 실제 출시 전 교체 pub-1370018111810020
         ios: 'ca-app-pub-XXXXXXXXXXXXXXXX~XXXXXXXXXX',
       },
     },

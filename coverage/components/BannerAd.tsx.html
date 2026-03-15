@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>30/30</span>
+                <span class='fraction'>36/36</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>30/30</span>
+                <span class='fraction'>36/36</span>
             </div>
         
             
@@ -111,38 +111,39 @@
 <a name='L46'></a><a href='#L46'>46</a>
 <a name='L47'></a><a href='#L47'>47</a>
 <a name='L48'></a><a href='#L48'>48</a>
-<a name='L49'></a><a href='#L49'>49</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -150,23 +151,25 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Capacitor } from '@capacitor/core'
-import { AdMob, BannerAdOptions, BannerAdSize, BannerAdPosition } from '@capacitor-community/admob'
+import { AdMob, BannerAdOptions, BannerAdPosition, BannerAdSize } from '@capacitor-community/admob'
 import styles from './BannerAd.module.css'
 &nbsp;
 const BANNER_AD_ID = {
-  android: import.meta.env.VITE_ADMOB_BANNER_ID_ANDROID ?? 'ca-app-pub-3940256099942544/6300978111', // test ID
-  ios: import.meta.env.VITE_ADMOB_BANNER_ID_IOS ?? 'ca-app-pub-3940256099942544/2934735716',       // test ID
+  android: import.meta.env.VITE_ADMOB_BANNER_ID_ANDROID ?? 'ca-app-pub-3940256099942544/6300978111',
+  ios: import.meta.env.VITE_ADMOB_BANNER_ID_IOS ?? 'ca-app-pub-3940256099942544/2934735716',
 }
 &nbsp;
 async function showBanner() {
@@ -174,21 +177,20 @@ async function showBanner() {
     adId: Capacitor.getPlatform() === <span class="branch-0 cbranch-no" title="branch not covered" >'ios' ? BANNER_AD_ID.ios : B</span>ANNER_AD_ID.android,
     adSize: BannerAdSize.ADAPTIVE_BANNER,
     position: BannerAdPosition.BOTTOM_CENTER,
-    margin: 60, // 탭바 높이만큼 위로
+    margin: 0,
     isTesting: import.meta.env.DEV,
   } satisfies BannerAdOptions)
 }
 &nbsp;
-/**
- * BannerAd
- * - 네이티브(Android/iOS): AdMob 배너를 탭바 위에 고정 표시
- * - 웹(개발): placeholder UI 표시
- */
 export function BannerAd() {
+  const { t } = useTranslation()
   const isNative = Capacitor.isNativePlatform()
 &nbsp;
   useEffect(() =&gt; {
-    if (!isNative) return
+    if (!isNative) {
+      return
+    }
+&nbsp;
     AdMob.initialize({ testingDevices: [], initializeForTesting: import.meta.env.DEV })
       .then(() =&gt; showBanner())
       .catch(console.error)
@@ -198,12 +200,13 @@ export function BannerAd() {
     }
   }, [isNative])
 &nbsp;
-  // 네이티브에서는 AdMob SDK가 직접 렌더링 — DOM 요소 불필요
-  if (isNative) return null
+  if (isNative) {
+    return null
+  }
 &nbsp;
   return (
     &lt;div className={styles.bannerAd} aria-label="Advertisement"&gt;
-      광고 영역 (AdMob Banner)
+      {t('ads.banner')}
     &lt;/div&gt;
   )
 }
@@ -214,7 +217,7 @@ export function BannerAd() {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-14T15:46:57.184Z
+                at 2026-03-15T11:50:14.443Z
             </div>
         <script src="../prettify.js"></script>
         <script>

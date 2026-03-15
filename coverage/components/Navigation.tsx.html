@@ -25,14 +25,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>24/24</span>
+                <span class='fraction'>29/29</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>7/7</span>
+                <span class='fraction'>8/8</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>24/24</span>
+                <span class='fraction'>29/29</span>
             </div>
         
             
@@ -103,7 +103,19 @@
 <a name='L38'></a><a href='#L38'>38</a>
 <a name='L39'></a><a href='#L39'>39</a>
 <a name='L40'></a><a href='#L40'>40</a>
-<a name='L41'></a><a href='#L41'>41</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -125,38 +137,48 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import type { Screen } from '../types'
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { useTranslation } from 'react-i18next'
+import type { Screen } from '../types'
+import { useAppStore } from '../store/appStore'
 import styles from './Navigation.module.css'
 &nbsp;
 interface NavItem {
   screen: Screen
   icon: string
-  label: string
+  translationKey: string
 }
 &nbsp;
 const NAV_ITEMS: NavItem[] = [
-  { screen: 'home', icon: '🏠', label: '홈' },
-  { screen: 'timer', icon: '⏱', label: '타이머' },
-  { screen: 'statistics', icon: '📊', label: '통계' },
-  { screen: 'goal', icon: '🎯', label: '목표' },
+  { screen: 'home', icon: '🏠', translationKey: 'nav.home' },
+  { screen: 'timer', icon: '⏱', translationKey: 'nav.timer' },
+  { screen: 'statistics', icon: '📊', translationKey: 'nav.statistics' },
+  { screen: 'goal', icon: '🎯', translationKey: 'nav.goal' },
 ]
 &nbsp;
 interface Props {
@@ -165,21 +187,29 @@ interface Props {
 }
 &nbsp;
 export function Navigation({ current, onNavigate }: Props) {
+  const { t } = useTranslation()
+  const focusLock = useAppStore((state) =&gt; state.focusLock)
+&nbsp;
   return (
-    &lt;nav className={styles.nav} role="navigation" aria-label="주 메뉴"&gt;
-      {NAV_ITEMS.map(({ screen, icon, label }) =&gt; (
-        &lt;button
-          key={screen}
-          type="button"
-          className={`${styles.navItem} ${current === screen ? styles.active : ''}`}
-          onClick={() =&gt; onNavigate(screen)}
-          aria-label={label}
-          aria-current={current === screen ? 'page' : undefined}
-        &gt;
-          &lt;span className={styles.navIcon}&gt;{icon}&lt;/span&gt;
-          {label}
-        &lt;/button&gt;
-      ))}
+    &lt;nav className={styles.nav} role="navigation" aria-label="Primary navigation"&gt;
+      {NAV_ITEMS.map(({ screen, icon, translationKey }) =&gt; {
+        const label = t(translationKey)
+&nbsp;
+        return (
+          &lt;button
+            key={screen}
+            type="button"
+            className={`${styles.navItem} ${current === screen ? styles.active : ''}`}
+            onClick={() =&gt; onNavigate(screen)}
+            aria-label={label}
+            aria-current={current === screen ? 'page' : undefined}
+            disabled={focusLock}
+          &gt;
+            &lt;span className={styles.navIcon}&gt;{icon}&lt;/span&gt;
+            {label}
+          &lt;/button&gt;
+        )
+      })}
     &lt;/nav&gt;
   )
 }
@@ -190,7 +220,7 @@ export function Navigation({ current, onNavigate }: Props) {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-14T15:46:57.184Z
+                at 2026-03-15T11:50:14.443Z
             </div>
         <script src="../prettify.js"></script>
         <script>
