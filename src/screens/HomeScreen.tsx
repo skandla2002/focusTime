@@ -1,5 +1,7 @@
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { BannerAd } from '../components/BannerAd'
+import { LanguageSwitcher } from '../components/LanguageSwitcher'
 import { useAppStore } from '../store/appStore'
 import { useGoalStore } from '../store/goalStore'
 import { useStreakStore } from '../store/streakStore'
@@ -10,6 +12,7 @@ import shared from '../styles/shared.module.css'
 import styles from './HomeScreen.module.css'
 
 export function HomeScreen() {
+  const { t } = useTranslation()
   const { records, getTodayMinutes, getWeekData, getTotalMinutes } = useStudyStore()
   const { goal } = useGoalStore()
   const { completedToday, mode, status } = useTimerStore()
@@ -46,71 +49,86 @@ export function HomeScreen() {
   const hour = new Date().getHours()
   const greeting =
     hour < 12
-      ? 'Good morning. Ready for a focused start?'
+      ? t('home.greetingMorning')
       : hour < 18
-        ? 'Keep your momentum going this afternoon.'
-        : 'Close the day with one more solid session.'
+        ? t('home.greetingAfternoon')
+        : t('home.greetingEvening')
 
   return (
     <div className={shared.screen}>
       <div className={shared.header}>
         <div>
-          <div className={shared.headerTitle}>FocusTimer</div>
+          <div className={shared.headerTitle}>{t('common.appName')}</div>
           <div className={shared.headerSubtitle}>{greeting}</div>
         </div>
-        {status === 'running' && (
-          <div className={styles.runningStatus}>
-            <span className={shared.runningIndicator} />
-            In focus mode
-          </div>
-        )}
+        <div>
+          {status === 'running' && (
+            <div className={styles.runningStatus}>
+              <span className={shared.runningIndicator} />
+              {t('home.runningStatus')}
+            </div>
+          )}
+          <LanguageSwitcher />
+        </div>
       </div>
 
       <div className={styles.streakBadge}>
         <div>
-          <div className={styles.streakLabel}>Current streak</div>
-          <div className={styles.streakValue}>🔥 {currentStreak} day{currentStreak === 1 ? '' : 's'}</div>
+          <div className={styles.streakLabel}>{t('home.currentStreak')}</div>
+          <div className={styles.streakValue}>🔥 {t('home.streakDays', { count: currentStreak })}</div>
         </div>
-        <div className={styles.streakMeta}>Best {longestStreak} day{longestStreak === 1 ? '' : 's'}</div>
+        <div className={styles.streakMeta}>{t('home.bestDays', { count: longestStreak })}</div>
       </div>
 
       {celebrationMessage && (
         <div className={styles.toastCard}>
-          <div className={styles.toastTitle}>Milestone reached</div>
+          <div className={styles.toastTitle}>{t('home.milestoneTitle')}</div>
           <div className={styles.toastCopy}>{celebrationMessage}</div>
         </div>
       )}
 
       <div className={shared.card}>
-        <div className={shared.cardTitle}>Today's study time</div>
+        <div className={shared.cardTitle}>{t('home.todayStudyTime')}</div>
         <div className={styles.todayTime}>{todayMinutes}</div>
-        <div className={styles.todayTimeUnit}>minutes / goal {dailyGoalMinutes} minutes</div>
+        <div className={styles.todayTimeUnit}>
+          {formatMinutes(todayMinutes)} / {dailyGoalMinutes} {t('common.minutesShort')}
+        </div>
         <div className={shared.progressBar}>
           <div className={shared.progressFill} style={{ width: `${goalProgress}%` }} />
         </div>
         <div className={shared.progressLabel}>
-          <span>{goalProgress >= 100 ? 'Goal achieved.' : `${Math.round(goalProgress)}% complete`}</span>
-          <span>{formatMinutes(Math.max(dailyGoalMinutes - todayMinutes, 0))} remaining</span>
+          <span>
+            {goalProgress >= 100
+              ? t('home.goalAchieved')
+              : t('home.goalProgress', { progress: Math.round(goalProgress) })}
+          </span>
+          <span>
+            {t('home.goalRemaining', {
+              remaining: formatMinutes(Math.max(dailyGoalMinutes - todayMinutes, 0)),
+            })}
+          </span>
         </div>
       </div>
 
       <div className={`${shared.card} ${styles.quickStartCard}`}>
-        <div className={shared.cardTitle}>Quick start</div>
+        <div className={shared.cardTitle}>{t('home.quickStart')}</div>
         <div className={styles.quickStartDesc}>
-          {mode === 'focus' ? 'Focus session: 25 minutes' : 'Break session: 5 minutes'}
+          {mode === 'focus' ? t('home.quickStartFocus') : t('home.quickStartBreak')}
         </div>
         <button
           type="button"
           className={`${shared.btn} ${shared.btnPrimary} ${styles.quickStartBtn}`}
           onClick={() => navigate('timer')}
         >
-          {status === 'running' ? 'View timer' : status === 'paused' ? 'Resume timer' : 'Start timer'}
+          {status === 'running'
+            ? t('home.viewTimer')
+            : status === 'paused'
+              ? t('home.resumeTimer')
+              : t('home.startTimer')}
         </button>
         {completedToday > 0 && (
           <div className={styles.sessionsToday}>
-            <div className={styles.sessionsLabel}>
-              Completed sessions today
-            </div>
+            <div className={styles.sessionsLabel}>{t('home.completedSessionsToday')}</div>
             <div className={shared.pomodoroDots}>
               {Array.from({ length: Math.min(completedToday, 8) }).map((_, index) => (
                 <div key={index} className={`${shared.pomodoroDot} ${shared.completed}`} />
@@ -121,21 +139,21 @@ export function HomeScreen() {
       </div>
 
       <div className={shared.card}>
-        <div className={shared.cardTitle}>Weekly summary</div>
+        <div className={shared.cardTitle}>{t('home.weeklySummary')}</div>
         <div className={shared.statRow}>
-          <span className={shared.statLabel}>Weekly total</span>
+          <span className={shared.statLabel}>{t('home.weeklyTotal')}</span>
           <span className={`${shared.statValue} ${shared.accent}`}>{formatMinutes(weekTotal)}</span>
         </div>
         <div className={shared.statRow}>
-          <span className={shared.statLabel}>Daily average</span>
+          <span className={shared.statLabel}>{t('home.dailyAverage')}</span>
           <span className={shared.statValue}>{formatMinutes(weekAverage)}</span>
         </div>
         <div className={shared.statRow}>
-          <span className={shared.statLabel}>All-time total</span>
+          <span className={shared.statLabel}>{t('home.allTimeTotal')}</span>
           <span className={shared.statValue}>{formatMinutes(totalMinutes)}</span>
         </div>
         <div className={shared.statRow}>
-          <span className={shared.statLabel}>Today's sessions</span>
+          <span className={shared.statLabel}>{t('home.todaySessions')}</span>
           <span className={shared.statValue}>{completedToday}</span>
         </div>
       </div>

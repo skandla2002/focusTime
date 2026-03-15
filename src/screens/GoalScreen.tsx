@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useGoalStore } from '../store/goalStore'
 import { trackEvent } from '../utils/analytics'
 import { formatMinutes } from '../utils/time'
@@ -8,6 +9,7 @@ import styles from './GoalScreen.module.css'
 const PRESETS = [60, 90, 120, 150, 180, 240]
 
 export function GoalScreen() {
+  const { t } = useTranslation()
   const { goal, setDailyGoal } = useGoalStore()
   const [value, setValue] = useState(goal.dailyGoalMinutes)
   const [saved, setSaved] = useState(false)
@@ -19,19 +21,27 @@ export function GoalScreen() {
     setTimeout(() => setSaved(false), 2000)
   }
 
+  function getCoachCopy(): string {
+    if (value <= 60) return t('goal.coachSmall')
+    if (value <= 120) return t('goal.coachSteady')
+    if (value <= 180) return t('goal.coachBalanced')
+    if (value <= 240) return t('goal.coachStructured')
+    return t('goal.coachBig')
+  }
+
   return (
     <div className={shared.screen}>
       <div className={shared.header}>
-        <div className={shared.headerTitle}>Daily Goal</div>
+        <div className={shared.headerTitle}>{t('goal.title')}</div>
       </div>
 
       <div className={shared.card}>
-        <div className={shared.cardTitle}>Target focus time</div>
+        <div className={shared.cardTitle}>{t('goal.targetFocusTime')}</div>
         <div className={styles.goalCurrent}>{formatMinutes(value)}</div>
         <input
           type="range"
           className={styles.goalSlider}
-          aria-label="Daily goal minutes"
+          aria-label={t('goal.ariaGoalMinutes')}
           min={30}
           max={480}
           step={10}
@@ -39,13 +49,13 @@ export function GoalScreen() {
           onChange={(event) => setValue(Number(event.target.value))}
         />
         <div className={styles.goalSliderLabels}>
-          <span>30 min</span>
-          <span>8 hours</span>
+          <span>{t('goal.sliderMin')}</span>
+          <span>{t('goal.sliderMax')}</span>
         </div>
       </div>
 
       <div className={shared.card}>
-        <div className={shared.cardTitle}>Quick picks</div>
+        <div className={shared.cardTitle}>{t('goal.quickPicks')}</div>
         <div className={styles.goalPresets}>
           {PRESETS.map((preset) => (
             <button
@@ -61,16 +71,8 @@ export function GoalScreen() {
       </div>
 
       <div className={`${shared.card} ${styles.coachCard}`}>
-        <div className={`${shared.cardTitle} ${styles.coachCardTitle}`}>
-          Coach note
-        </div>
-        <div className={styles.coachText}>
-          {value <= 60 && 'Start small and build consistency. A one-hour target is a great baseline.'}
-          {value > 60 && value <= 120 && 'One to two hours is a realistic target for steady daily improvement.'}
-          {value > 120 && value <= 180 && 'Two to three hours works well when you can plan breaks between sessions.'}
-          {value > 180 && value <= 240 && 'Three to four hours needs structure. Break it into blocks and protect your rest.'}
-          {value > 240 && 'That is a big target. Use several Pomodoro rounds and make recovery time part of the plan.'}
-        </div>
+        <div className={`${shared.cardTitle} ${styles.coachCardTitle}`}>{t('goal.coachNote')}</div>
+        <div className={styles.coachText}>{getCoachCopy()}</div>
       </div>
 
       <div className={styles.saveRow}>
@@ -79,23 +81,23 @@ export function GoalScreen() {
           className={`${shared.btn} ${shared.btnPrimary} ${styles.saveBtn}`}
           onClick={handleSave}
         >
-          {saved ? 'Goal saved' : 'Save goal'}
+          {saved ? t('goal.goalSaved') : t('goal.saveGoal')}
         </button>
       </div>
 
       <div className={shared.card}>
-        <div className={shared.cardTitle}>Pomodoro guide</div>
+        <div className={shared.cardTitle}>{t('goal.pomodoroGuide')}</div>
         <div className={styles.guideText}>
           <div className={styles.guideRow}>
-            Focus for <strong className={styles.guideEmphasis}>25 minutes</strong>, then rest for{' '}
-            <strong className={styles.guideEmphasis}>5 minutes</strong>.
+            {t('common.focus')} <strong className={styles.guideEmphasis}>25 {t('common.minutesShort')}</strong>,{' '}
+            {t('common.break')} <strong className={styles.guideEmphasis}>5 {t('common.minutesShort')}</strong>.
           </div>
-          <div>
-            This rhythm helps you stay engaged without burning out, especially when the goal gets larger.
-          </div>
+          <div>{t('goal.guideLine2')}</div>
           <div className={styles.guideSessionCount}>
-            A goal of {formatMinutes(value)} is about{' '}
-            <strong className={styles.guideSessionEmphasis}>{Math.round(value / 25)} focus sessions</strong>.
+            {t('goal.guideLine3', {
+              goal: formatMinutes(value),
+              sessions: Math.round(value / 25),
+            })}
           </div>
         </div>
       </div>

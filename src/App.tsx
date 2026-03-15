@@ -2,7 +2,9 @@ import * as Sentry from '@sentry/react'
 import { Capacitor } from '@capacitor/core'
 import { App as CapApp } from '@capacitor/app'
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import styles from './App.module.css'
+import shared from './styles/shared.module.css'
 import { BannerAd } from './components/BannerAd'
 import { InterstitialAd } from './components/InterstitialAd'
 import { Navigation } from './components/Navigation'
@@ -67,13 +69,15 @@ function AppContent() {
 }
 
 function ErrorFallback() {
+  const { t } = useTranslation()
+
   return (
     <div className={styles.app}>
-      <div className="screen">
-        <div className="card">
-          <div className="card-title">App Error</div>
+      <div className={shared.screen}>
+        <div className={shared.card}>
+          <div className={shared.cardTitle}>{t('app.errorTitle')}</div>
           <div className={styles.errorFallbackBody}>
-            Something unexpected happened. Restart the app and try again.
+            {t('app.errorBody')}
           </div>
         </div>
       </div>

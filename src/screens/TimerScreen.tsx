@@ -1,27 +1,50 @@
 import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { BREAK_DURATION, FOCUS_DURATION } from '../types'
 import shared from '../styles/shared.module.css'
 import { useAppStore } from '../store/appStore'
 import { useStudyStore } from '../store/studyStore'
 import { useTimerStore } from '../store/timerStore'
+import { playCompletionAlert } from '../utils/completionAlert'
 import { formatTime, formatMinutes } from '../utils/time'
 import styles from './TimerScreen.module.css'
 
+interface CompletionNotice {
+  title: string
+  body: string
+}
+
 export function TimerScreen() {
-  const { mode, status, timeLeft, start, pause, reset, tick, switchMode, completedToday } =
-    useTimerStore()
+  const { t } = useTranslation()
+  const {
+    mode,
+    status,
+    timeLeft,
+    start,
+    pause,
+    reset,
+    tick,
+    switchMode,
+    completedToday,
+    lastCompletionAt,
+    lastCompletedMode,
+  } = useTimerStore()
   const { addSession } = useStudyStore()
   const { focusLock, setFocusLock, triggerInterstitial } = useAppStore()
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const [lastCompleted, setLastCompleted] = useState<string | null>(null)
+  const completionRef = useRef<number | null>(null)
+  const wakeLockRef = useRef<WakeLockSentinel | null>(null)
+  const [lastCompletedDuration, setLastCompletedDuration] = useState<string | null>(null)
+  const [completionNotice, setCompletionNotice] = useState<CompletionNotice | null>(null)
 
   useEffect(() => {
     if (status === 'running') {
       intervalRef.current = setInterval(() => {
         const session = tick()
         if (session) {
+          const duration = formatMinutes(session.duration)
           void addSession(session)
-          setLastCompleted(formatMinutes(session.duration))
+          setLastCompletedDuration(duration)
           triggerInterstitial()
         }
       }, 1000)
@@ -37,20 +60,77 @@ export function TimerScreen() {
     }
   }, [status, tick, addSession, triggerInterstitial])
 
+  useEffect(() => {
+    if (!lastCompletionAt || lastCompletionAt === completionRef.current || !lastCompletedMode) {
+      return
+    }
+
+    completionRef.current = lastCompletionAt
+    void playCompletionAlert()
+
+    const title =
+      lastCompletedMode === 'focus' ? t('timer.alertFocusTitle') : t('timer.alertBreakTitle')
+    const body =
+      lastCompletedMode === 'focus' && lastCompletedDuration
+        ? t('timer.completionFocusBody', { duration: lastCompletedDuration })
+        : lastCompletedMode === 'focus'
+          ? t('timer.alertFocusBody')
+          : t('timer.alertBreakBody')
+
+    setCompletionNotice({ title, body })
+
+    const timer = setTimeout(() => setCompletionNotice(null), 2200)
+    return () => clearTimeout(timer)
+  }, [lastCompletedDuration, lastCompletedMode, lastCompletionAt, t])
+
+  useEffect(() => {
+    const acquireWakeLock = async () => {
+      if ('wakeLock' in navigator) {
+        try {
+          wakeLockRef.current = await navigator.wakeLock.request('screen')
+        } catch {
+          // 절전 모드 또는 권한 거부 — 무시
+        }
+      }
+    }
+    const releaseWakeLock = () => {
+      wakeLockRef.current?.release().catch(() => {})
+      wakeLockRef.current = null
+    }
+
+    if (status === 'running') {
+      void acquireWakeLock()
+    } else {
+      releaseWakeLock()
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && status === 'running') {
+        void acquireWakeLock()
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      releaseWakeLock()
+    }
+  }, [status])
+
   const totalDuration = mode === 'focus' ? FOCUS_DURATION : BREAK_DURATION
   const progress = (timeLeft / totalDuration) * 100
   const circumference = 2 * Math.PI * 110
   const dashOffset = circumference * (1 - progress / 100)
   const isPrimaryActionLocked = focusLock && status !== 'running'
-  const lockButtonLabel = focusLock ? 'Disable focus lock' : 'Enable focus lock'
+  const lockButtonLabel = focusLock ? t('timer.disableLock') : t('timer.enableLock')
 
   return (
     <div className={shared.screen}>
       <div className={shared.header}>
         <div>
-          <div className={shared.headerTitle}>타이머</div>
+          <div className={shared.headerTitle}>{t('timer.title')}</div>
           <div className={shared.headerSubtitle}>
-            {focusLock ? '집중 잠금이 켜져 있어 다른 조작이 막혀 있어요.' : '모드를 고르고 다음 세션을 시작해보세요.'}
+            {focusLock ? t('timer.subtitleLocked') : t('timer.subtitleReady')}
           </div>
         </div>
         <button
@@ -62,7 +142,7 @@ export function TimerScreen() {
           aria-pressed={focusLock}
           aria-label={lockButtonLabel}
         >
-          {focusLock ? '잠금 해제' : '잠금'}
+          {focusLock ? t('timer.unlock') : t('timer.lock')}
         </button>
       </div>
 
@@ -72,29 +152,26 @@ export function TimerScreen() {
           className={`${styles.modeTab} ${mode === 'focus' ? styles.active : ''}`}
           onClick={() => switchMode('focus')}
           disabled={focusLock}
-          aria-label="Focus mode"
+          aria-label={t('timer.focusMode')}
         >
-          집중 25분
+          {t('timer.focusLabel')}
         </button>
         <button
           type="button"
           className={`${styles.modeTab} ${mode === 'break' ? styles.active : ''}`}
           onClick={() => switchMode('break')}
           disabled={focusLock}
-          aria-label="Break mode"
+          aria-label={t('timer.breakMode')}
         >
-          휴식 5분
+          {t('timer.breakLabel')}
         </button>
       </div>
 
-      {lastCompleted && status === 'idle' && (
-        <div className={`${styles.sessionComplete} ${shared.popIn}`}>
-          <div className={styles.sessionCompleteIcon}>{mode === 'break' ? '완료' : '복귀'}</div>
-          <div className={styles.sessionCompleteTitle}>
-            {mode === 'break' ? '집중 세션이 완료됐어요.' : '휴식이 끝났어요.'}
-          </div>
-          <div className={styles.sessionCompleteSub}>
-            {mode === 'break' ? `${lastCompleted} 기록이 저장됐어요.` : '준비되면 다음 집중 세션을 시작해보세요.'}
+      {completionNotice && (
+        <div className={styles.completionOverlay} role="status" aria-live="polite">
+          <div className={styles.completionModal}>
+            <div className={styles.completionTitle}>{completionNotice.title}</div>
+            <div className={styles.completionBody}>{completionNotice.body}</div>
           </div>
         </div>
       )}
@@ -116,7 +193,7 @@ export function TimerScreen() {
             <div className={styles.timerTime}>{formatTime(timeLeft)}</div>
             <div className={styles.timerModeLabel}>
               {status === 'running' && <span className={`${shared.runningIndicator} ${styles.runningDot}`} />}
-              {mode === 'focus' ? '집중' : '휴식'} 시간
+              {mode === 'focus' ? t('timer.focusTime') : t('timer.breakTime')}
             </div>
           </div>
         </div>
@@ -126,18 +203,18 @@ export function TimerScreen() {
             type="button"
             className={`${shared.btn} ${shared.btnIcon}`}
             onClick={reset}
-            aria-label="Reset timer"
+            aria-label={t('timer.reset')}
           >
-            ↺
+            {t('timer.resetShort')}
           </button>
           {status === 'running' ? (
             <button
               type="button"
               className={`${shared.btn} ${shared.btnPrimary}`}
               onClick={pause}
-              aria-label="Pause timer"
+              aria-label={t('timer.pause')}
             >
-              일시정지
+              {t('timer.pauseText')}
             </button>
           ) : (
             <button
@@ -145,38 +222,38 @@ export function TimerScreen() {
               className={`${shared.btn} ${shared.btnPrimary}`}
               onClick={start}
               disabled={isPrimaryActionLocked}
-              aria-label={status === 'paused' ? 'Resume timer' : 'Start timer'}
+              aria-label={status === 'paused' ? t('timer.resume') : t('timer.start')}
             >
-              {status === 'paused' ? '계속' : '시작'}
+              {status === 'paused' ? t('timer.resumeText') : t('timer.startText')}
             </button>
           )}
           <button
             type="button"
             className={`${shared.btn} ${shared.btnIcon} ${styles.btnDisabled}`}
-            aria-label="Timer settings"
+            aria-label={t('timer.settings')}
             disabled
           >
-            ⚙
+            {t('timer.settingsShort')}
           </button>
         </div>
       </div>
 
       <div className={shared.card}>
-        <div className={shared.cardTitle}>오늘의 집중</div>
+        <div className={shared.cardTitle}>{t('timer.todayFocus')}</div>
         <div className={styles.todaySummary}>
           <div>
             <div className={`${styles.summaryNumber} ${styles.summaryNumberPrimary}`}>{completedToday}</div>
-            <div className={styles.summaryLabel}>완료 세션</div>
+            <div className={styles.summaryLabel}>{t('timer.completedSessions')}</div>
           </div>
           <div>
             <div className={`${styles.summaryNumber} ${styles.summaryNumberSecondary}`}>
               {completedToday * 25}
             </div>
-            <div className={styles.summaryLabel}>분 집중</div>
+            <div className={styles.summaryLabel}>{t('timer.focusMinutes')}</div>
           </div>
           <div>
             <div className={`${styles.summaryNumber} ${styles.summaryNumberSuccess}`}>{completedToday * 5}</div>
-            <div className={styles.summaryLabel}>분 휴식</div>
+            <div className={styles.summaryLabel}>{t('timer.breakMinutes')}</div>
           </div>
         </div>
 

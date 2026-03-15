@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { FOCUS_DURATION } from '../types'
+import i18n from '../i18n'
 import { useAppStore } from '../store/appStore'
 import { useTimerStore } from '../store/timerStore'
 import { TimerScreen } from './TimerScreen'
@@ -11,7 +12,8 @@ vi.mock('../utils/analytics', () => ({
 }))
 
 describe('timer screen', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    await i18n.changeLanguage('en')
     localStorage.clear()
     useAppStore.setState({
       screen: 'timer',
@@ -26,6 +28,8 @@ describe('timer screen', () => {
       sessionStart: Date.now() - 30_000,
       completedToday: 0,
       backgroundedAt: null,
+      lastCompletionAt: null,
+      lastCompletedMode: null,
     })
   })
 

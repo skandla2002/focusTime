@@ -1,5 +1,6 @@
 import { afterEach, vi } from 'vitest'
 import { cleanup } from '@testing-library/react'
+import '../i18n'
 
 vi.mock('@capacitor/core', () => ({
   Capacitor: {
@@ -36,6 +37,16 @@ vi.mock('@capacitor/local-notifications', () => ({
     requestPermissions: vi.fn(() => Promise.resolve({ display: 'granted' })),
     schedule: vi.fn(() => Promise.resolve()),
     cancel: vi.fn(() => Promise.resolve()),
+  },
+}))
+
+vi.mock('@capacitor/haptics', () => ({
+  Haptics: {
+    vibrate: vi.fn(() => Promise.resolve()),
+    impact: vi.fn(() => Promise.resolve()),
+  },
+  ImpactStyle: {
+    Heavy: 'HEAVY',
   },
 }))
 

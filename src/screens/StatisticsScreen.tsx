@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -33,35 +34,8 @@ ChartJS.register(
   Filler
 )
 
-const CHART_OPTIONS = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: { display: false },
-    tooltip: {
-      callbacks: {
-        label: (context: TooltipItem<'bar' | 'line'>) => `${context.parsed.y} min`,
-      },
-    },
-  },
-  scales: {
-    x: {
-      grid: { color: 'rgba(255,255,255,0.05)' },
-      ticks: { color: '#9e9e9e', font: { size: 11 } },
-    },
-    y: {
-      grid: { color: 'rgba(255,255,255,0.05)' },
-      ticks: {
-        color: '#9e9e9e',
-        font: { size: 11 },
-        callback: (value: string | number) => `${value} min`,
-      },
-      beginAtZero: true,
-    },
-  },
-}
-
 export function StatisticsScreen() {
+  const { t } = useTranslation()
   const { records, getWeekData, getMonthData, getTodayMinutes, getTotalMinutes } = useStudyStore()
   const { triggerInterstitial } = useAppStore()
   const triggeredRef = useRef(false)
@@ -100,6 +74,35 @@ export function StatisticsScreen() {
     weekData[0] ?? { date: todayKey, minutes: 0 }
   )
 
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: (context: TooltipItem<'bar' | 'line'>) =>
+            `${context.parsed.y} ${t('common.minutesShort')}`,
+        },
+      },
+    },
+    scales: {
+      x: {
+        grid: { color: 'rgba(255,255,255,0.05)' },
+        ticks: { color: '#9e9e9e', font: { size: 11 } },
+      },
+      y: {
+        grid: { color: 'rgba(255,255,255,0.05)' },
+        ticks: {
+          color: '#9e9e9e',
+          font: { size: 11 },
+          callback: (value: string | number) => `${value} ${t('common.minutesShort')}`,
+        },
+        beginAtZero: true,
+      },
+    },
+  }
+
   const weekChartData = {
     labels: weekData.map((day) => getDayLabel(day.date)),
     datasets: [
@@ -133,11 +136,14 @@ export function StatisticsScreen() {
   }
 
   async function handleShare() {
-    const shareText = `Today I completed ${todayMinutes} focused minutes across ${todaySessions} sessions! #FocusTimer`
+    const shareText = t('statistics.shareText', {
+      minutes: todayMinutes,
+      sessions: todaySessions,
+    })
 
     try {
       const result = await shareStudyResult({
-        title: 'FocusTimer study result',
+        title: t('statistics.shareTitle'),
         text: shareText,
         url: window.location.href,
       })
@@ -148,122 +154,112 @@ export function StatisticsScreen() {
         today_sessions: todaySessions,
       })
 
-      setShareFeedback(
-        result === 'shared'
-          ? 'Share sheet opened.'
-          : 'Sharing is not supported here, so the result was copied.'
-      )
+      setShareFeedback(result === 'shared' ? t('statistics.shareOpened') : t('statistics.shareCopied'))
     } catch {
-      setShareFeedback('This device cannot share the result right now.')
+      setShareFeedback(t('statistics.shareUnavailable'))
     }
   }
 
   return (
     <div className={shared.screen}>
       <div className={shared.header}>
-        <div className={shared.headerTitle}>Statistics</div>
+        <div className={shared.headerTitle}>{t('statistics.title')}</div>
       </div>
 
       <div className={styles.statsGrid}>
         <div className={`${shared.card} ${styles.gridCard}`}>
-          <div className={shared.cardTitle}>Today</div>
+          <div className={shared.cardTitle}>{t('common.today')}</div>
           <div className={`${styles.gridNumber} ${styles.gridNumberPrimary}`}>{todayMinutes}</div>
-          <div className={styles.gridUnit}>min</div>
+          <div className={styles.gridUnit}>{t('common.minutesShort')}</div>
         </div>
         <div className={`${shared.card} ${styles.gridCard}`}>
-          <div className={shared.cardTitle}>This Week</div>
+          <div className={shared.cardTitle}>{t('statistics.thisWeek')}</div>
           <div className={`${styles.gridNumber} ${styles.gridNumberSecondary}`}>{weekTotal}</div>
-          <div className={styles.gridUnit}>min</div>
+          <div className={styles.gridUnit}>{t('common.minutesShort')}</div>
         </div>
         <div className={`${shared.card} ${styles.gridCard}`}>
-          <div className={shared.cardTitle}>This Month</div>
+          <div className={shared.cardTitle}>{t('statistics.thisMonth')}</div>
           <div className={`${styles.gridNumber} ${styles.gridNumberSuccess}`}>{monthTotal}</div>
-          <div className={styles.gridUnit}>min</div>
+          <div className={styles.gridUnit}>{t('common.minutesShort')}</div>
         </div>
         <div className={`${shared.card} ${styles.gridCard}`}>
-          <div className={shared.cardTitle}>Total</div>
+          <div className={shared.cardTitle}>{t('common.total')}</div>
           <div className={`${styles.gridNumber} ${styles.gridNumberWarning}`}>{totalMinutes}</div>
-          <div className={styles.gridUnit}>min</div>
+          <div className={styles.gridUnit}>{t('common.minutesShort')}</div>
         </div>
       </div>
 
       <div className={shared.card}>
-        <div className={styles.chartTitle}>Weekly focus time</div>
+        <div className={styles.chartTitle}>{t('statistics.weeklyFocusTime')}</div>
         {weekTotal > 0 ? (
           <div className={styles.chartContainer}>
-            <Bar data={weekChartData} options={CHART_OPTIONS as never} />
+            <Bar data={weekChartData} options={chartOptions as never} />
           </div>
         ) : (
           <div className={shared.emptyState}>
             <div className={shared.emptyStateIcon}>+</div>
             <div className={shared.emptyStateText}>
-              No study history yet.
+              {t('statistics.noHistoryTitle')}
               <br />
-              Start a timer to build your first chart.
+              {t('statistics.noHistoryBody')}
             </div>
           </div>
         )}
         <div className={styles.chartMeta}>
           <span className={styles.chartMetaItem}>
-            Active days <strong className={styles.chartMetaValue}>{activeDays}</strong>
+            {t('statistics.activeDays')} <strong className={styles.chartMetaValue}>{activeDays}</strong>
           </span>
           <span className={styles.chartMetaItem}>
-            Best day <strong className={styles.chartMetaValue}>{formatMinutes(maxDay.minutes)}</strong>
+            {t('statistics.bestDay')} <strong className={styles.chartMetaValue}>{formatMinutes(maxDay.minutes)}</strong>
           </span>
         </div>
       </div>
 
       <div className={shared.card}>
-        <div className={styles.chartTitle}>30-day trend</div>
+        <div className={styles.chartTitle}>{t('statistics.trendTitle')}</div>
         {monthTotal > 0 ? (
           <div className={styles.chartContainer}>
-            <Line data={monthChartData} options={CHART_OPTIONS as never} />
+            <Line data={monthChartData} options={chartOptions as never} />
           </div>
         ) : (
           <div className={shared.emptyState}>
             <div className={shared.emptyStateIcon}>~</div>
             <div className={shared.emptyStateText}>
-              More study history is needed
+              {t('statistics.trendEmptyTitle')}
               <br />
-              before the monthly trend can appear.
+              {t('statistics.trendEmptyBody')}
             </div>
           </div>
         )}
       </div>
 
       <div className={shared.card}>
-        <div className={shared.cardTitle}>Details</div>
+        <div className={shared.cardTitle}>{t('statistics.details')}</div>
         <div className={shared.statRow}>
-          <span className={shared.statLabel}>Weekly average</span>
+          <span className={shared.statLabel}>{t('statistics.weeklyAverage')}</span>
           <span className={shared.statValue}>{formatMinutes(Math.round(weekTotal / 7))}</span>
         </div>
         <div className={shared.statRow}>
-          <span className={shared.statLabel}>Active days</span>
+          <span className={shared.statLabel}>{t('statistics.activeDays')}</span>
           <span className={shared.statValue}>{activeDays} / 7</span>
         </div>
         <div className={shared.statRow}>
-          <span className={shared.statLabel}>Monthly total</span>
+          <span className={shared.statLabel}>{t('statistics.monthlyTotal')}</span>
           <span className={`${shared.statValue} ${shared.accent}`}>{formatMinutes(monthTotal)}</span>
         </div>
         <div className={shared.statRow}>
-          <span className={shared.statLabel}>Total focus time</span>
+          <span className={shared.statLabel}>{t('statistics.totalFocusTime')}</span>
           <span className={`${shared.statValue} ${shared.accent}`}>{formatMinutes(totalMinutes)}</span>
         </div>
       </div>
 
       <div className={`${shared.card} ${styles.shareCard}`}>
-        <div className={shared.cardTitle}>Share result</div>
-        <div className={styles.shareDesc}>
-          Share today's progress with the system share sheet, or copy it when sharing is unavailable.
-        </div>
+        <div className={shared.cardTitle}>{t('statistics.shareResult')}</div>
+        <div className={styles.shareDesc}>{t('statistics.shareDesc')}</div>
         <button type="button" className={`${shared.btn} ${shared.btnPrimary} ${styles.shareBtn}`} onClick={handleShare}>
-          Share My Result
+          {t('statistics.shareButton')}
         </button>
-        {shareFeedback && (
-          <div className={styles.shareFeedback}>
-            {shareFeedback}
-          </div>
-        )}
+        {shareFeedback && <div className={styles.shareFeedback}>{shareFeedback}</div>}
       </div>
     </div>
   )

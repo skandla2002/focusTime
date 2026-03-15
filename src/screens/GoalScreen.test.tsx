@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import i18n from '../i18n'
 import { GoalScreen } from './GoalScreen'
 import { useGoalStore } from '../store/goalStore'
 import { trackEvent } from '../utils/analytics'
@@ -10,7 +11,8 @@ vi.mock('../utils/analytics', () => ({
 }))
 
 describe('goal screen', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    await i18n.changeLanguage('en')
     localStorage.clear()
     useGoalStore.setState({ goal: { dailyGoalMinutes: 120 } })
   })

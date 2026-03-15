@@ -1,0 +1,28 @@
+{
+  "color": {
+    "bg": {
+      "primary":    { "value": "#0f0f23", "comment": "앱 배경" },
+      "card":       { "value": "#1a1a35", "comment": "카드 배경" },
+      "cardHover":  { "value": "#22224a", "comment": "카드 호버" }
+    },
+    "primary":      { "value": "#6c63ff", "comment": "주 브랜드 색상" },
+    "primaryLight": { "value": "#8b85ff", "comment": "주 브랜드 밝은 색상" },
+    "secondary":    { "value": "#4fc3f7", "comment": "보조 색상" },
+    "success":      { "value": "#4caf50" },
+    "warning":      { "value": "#ff9800" },
+    "danger":       { "value": "#f44336" },
+    "text": {
+      "primary":    { "value": "#e0e0e0" },
+      "secondary":  { "value": "#9e9e9e" },
+      "muted":      { "value": "#666666" }
+    },
+    "border":       { "value": "#2a2a4a" }
+  },
+  "size": {
+    "navHeight":    { "value": "64px", "comment": "하단 탭바 높이" },
+    "bannerHeight": { "value": "60px", "comment": "AdMob 배너 높이" }
+  },
+  "typography": {
+    "fontFamily":   { "value": "'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif" }
+  }
+}

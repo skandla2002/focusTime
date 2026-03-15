@@ -1,10 +1,13 @@
 import { useState } from 'react'
-import { signInWithGoogle } from '../utils/cloudStorage'
+import { useTranslation } from 'react-i18next'
+import { LanguageSwitcher } from '../components/LanguageSwitcher'
 import { useAppStore } from '../store/appStore'
+import { signInWithGoogle } from '../utils/cloudStorage'
 import shared from '../styles/shared.module.css'
 import styles from './LoginScreen.module.css'
 
 export function LoginScreen() {
+  const { t } = useTranslation()
   const { navigate } = useAppStore()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -14,9 +17,8 @@ export function LoginScreen() {
     setError(null)
     try {
       await signInWithGoogle()
-      // OAuth 리다이렉트 후 subscribeAuthState 가 user 를 세팅
     } catch {
-      setError('로그인에 실패했습니다. 다시 시도해주세요.')
+      setError(t('login.loginFailed'))
     } finally {
       setLoading(false)
     }
@@ -30,8 +32,9 @@ export function LoginScreen() {
     <div className={`${shared.screen} ${styles.loginScreen}`}>
       <div className={styles.loginHero}>
         <div className={styles.loginIcon}>⏱</div>
-        <h1 className={styles.loginTitle}>FocusTimer</h1>
-        <p className={styles.loginSubtitle}>집중 기록을 클라우드에 저장하고{'\n'}어느 기기에서든 이어서 공부하세요.</p>
+        <h1 className={styles.loginTitle}>{t('common.appName')}</h1>
+        <p className={styles.loginSubtitle}>{t('login.subtitle')}</p>
+        <LanguageSwitcher />
       </div>
 
       <div className={styles.loginActions}>
@@ -42,7 +45,7 @@ export function LoginScreen() {
           disabled={loading}
         >
           <span className={styles.btnGoogleIcon}>G</span>
-          {loading ? '로그인 중...' : 'Google로 계속하기'}
+          {loading ? t('login.loggingIn') : t('login.googleContinue')}
         </button>
 
         {error && <p className={styles.loginError}>{error}</p>}
@@ -52,12 +55,10 @@ export function LoginScreen() {
           className={styles.btnSkip}
           onClick={handleSkip}
         >
-          로그인 없이 시작하기
+          {t('login.skip')}
         </button>
 
-        <p className={styles.loginNotice}>
-          로그인하지 않으면 데이터가 이 기기에만 저장됩니다.
-        </p>
+        <p className={styles.loginNotice}>{t('login.notice')}</p>
       </div>
     </div>
   )

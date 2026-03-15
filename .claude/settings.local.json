@@ -9,7 +9,9 @@
       "Bash(pnpm remove:*)",
       "Bash(pnpm typecheck:*)",
       "Bash(pnpm build:*)",
-      "Bash(echo $ANDROID_HOME $ANDROID_SDK_ROOT)"
+      "Bash(echo $ANDROID_HOME $ANDROID_SDK_ROOT)",
+      "Bash(npx tsc:*)",
+      "Bash(npx vitest:*)"
     ]
   }
 }

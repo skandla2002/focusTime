@@ -1,3 +1,5 @@
+@import './_tokens.css';
+
 /* CSS Reset & Base */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -61,4 +63,24 @@ html, body {
 @keyframes pop-in {
   0% { transform: scale(0.8); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
+}
+
+@media (orientation: landscape) {
+  #root {
+    display: none;
+  }
+
+  body::before {
+    content: 'Portrait mode only';
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+  }
 }

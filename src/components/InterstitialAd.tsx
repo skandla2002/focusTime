@@ -1,12 +1,13 @@
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Capacitor } from '@capacitor/core'
 import { AdMob, AdOptions, InterstitialAdPluginEvents } from '@capacitor-community/admob'
 import { useAppStore } from '../store/appStore'
 import styles from './InterstitialAd.module.css'
 
 const INTERSTITIAL_AD_ID = {
-  android: import.meta.env.VITE_ADMOB_INTERSTITIAL_ID_ANDROID ?? 'ca-app-pub-3940256099942544/1033173712', // test ID
-  ios: import.meta.env.VITE_ADMOB_INTERSTITIAL_ID_IOS ?? 'ca-app-pub-3940256099942544/4411468910',       // test ID
+  android: import.meta.env.VITE_ADMOB_INTERSTITIAL_ID_ANDROID ?? 'ca-app-pub-3940256099942544/1033173712',
+  ios: import.meta.env.VITE_ADMOB_INTERSTITIAL_ID_IOS ?? 'ca-app-pub-3940256099942544/4411468910',
 }
 
 async function prepareInterstitial() {
@@ -14,73 +15,71 @@ async function prepareInterstitial() {
     adId: Capacitor.getPlatform() === 'ios' ? INTERSTITIAL_AD_ID.ios : INTERSTITIAL_AD_ID.android,
     isTesting: import.meta.env.DEV,
   }
+
   await AdMob.prepareInterstitial(options)
 }
 
-/**
- * InterstitialAd
- * - 네이티브: AdMob 전면 광고 로드 후 showInterstitial 트리거 시 표시
- * - 웹(개발): 5초 후 자동 닫히는 placeholder 오버레이 표시
- */
 export function InterstitialAd() {
+  const { t } = useTranslation()
   const { showInterstitial, dismissInterstitial } = useAppStore()
   const isNative = Capacitor.isNativePlatform()
 
-  // 네이티브: 전면 광고 사전 로드 및 표시
   useEffect(() => {
-    if (!isNative) return
+    if (!isNative) {
+      return
+    }
 
     prepareInterstitial().catch(console.error)
 
-    const loadedListener = AdMob.addListener(
-      InterstitialAdPluginEvents.Loaded,
-      () => {
-        if (showInterstitial) {
-          AdMob.showInterstitial().catch(console.error)
-        }
+    const loadedListener = AdMob.addListener(InterstitialAdPluginEvents.Loaded, () => {
+      if (showInterstitial) {
+        AdMob.showInterstitial().catch(console.error)
       }
-    )
+    })
 
-    const dismissedListener = AdMob.addListener(
-      InterstitialAdPluginEvents.Dismissed,
-      () => {
-        dismissInterstitial()
-        prepareInterstitial().catch(console.error) // 다음 표시를 위해 사전 로드
-      }
-    )
+    const dismissedListener = AdMob.addListener(InterstitialAdPluginEvents.Dismissed, () => {
+      dismissInterstitial()
+      prepareInterstitial().catch(console.error)
+    })
 
     return () => {
-      loadedListener.then((l) => l.remove())
-      dismissedListener.then((l) => l.remove())
+      loadedListener.then((listener) => listener.remove())
+      dismissedListener.then((listener) => listener.remove())
     }
-  }, [isNative, showInterstitial, dismissInterstitial])
+  }, [dismissInterstitial, isNative, showInterstitial])
 
-  // 네이티브에서 showInterstitial 트리거 시 SDK 광고 표시
   useEffect(() => {
-    if (!isNative || !showInterstitial) return
+    if (!isNative || !showInterstitial) {
+      return
+    }
+
     AdMob.showInterstitial().catch(console.error)
   }, [isNative, showInterstitial])
 
-  // 웹(개발): placeholder UI
   useEffect(() => {
-    if (isNative || !showInterstitial) return
+    if (isNative || !showInterstitial) {
+      return
+    }
+
     const timer = setTimeout(dismissInterstitial, 5000)
     return () => clearTimeout(timer)
-  }, [isNative, showInterstitial, dismissInterstitial])
+  }, [dismissInterstitial, isNative, showInterstitial])
 
-  if (isNative || !showInterstitial) return null
+  if (isNative || !showInterstitial) {
+    return null
+  }
 
   return (
     <div className={styles.interstitialOverlay} onClick={dismissInterstitial}>
-      <div className={styles.interstitialCard} onClick={(e) => e.stopPropagation()}>
-        <div className={styles.interstitialLabel}>광고</div>
+      <div className={styles.interstitialCard} onClick={(event) => event.stopPropagation()}>
+        <div className={styles.interstitialLabel}>{t('ads.interstitialLabel')}</div>
         <div className={styles.interstitialAdArea}>
-          AdMob Interstitial Ad
+          {t('ads.interstitialBody')}
           <br />
-          <span className={styles.interstitialAdSubtext}>(전면 광고 영역)</span>
+          <span className={styles.interstitialAdSubtext}>{t('ads.interstitialSubtext')}</span>
         </div>
         <button type="button" className={styles.interstitialClose} onClick={dismissInterstitial}>
-          닫기
+          {t('common.close')}
         </button>
       </div>
     </div>

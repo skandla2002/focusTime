@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/react'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import './i18n'
 import './styles/globals.css'
 import { App } from './App'
 

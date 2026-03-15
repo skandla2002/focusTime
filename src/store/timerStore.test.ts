@@ -18,6 +18,8 @@ describe('timer store', () => {
       sessionStart: null,
       completedToday: 0,
       backgroundedAt: null,
+      lastCompletionAt: null,
+      lastCompletedMode: null,
     })
   })
 

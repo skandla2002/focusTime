@@ -1,11 +1,13 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import i18n from '../i18n'
 import { Navigation } from './Navigation'
 import { useAppStore } from '../store/appStore'
 
 describe('navigation', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    await i18n.changeLanguage('en')
     useAppStore.setState({
       screen: 'home',
       showInterstitial: false,

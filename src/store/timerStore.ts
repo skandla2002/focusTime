@@ -10,6 +10,8 @@ interface TimerState {
   sessionStart: number | null
   completedToday: number
   backgroundedAt: number | null
+  lastCompletionAt: number | null
+  lastCompletedMode: TimerMode | null
   start: () => void
   pause: () => void
   reset: () => void
@@ -30,6 +32,8 @@ export const useTimerStore = create<TimerState>((set, get) => ({
   sessionStart: null,
   completedToday: 0,
   backgroundedAt: null,
+  lastCompletionAt: null,
+  lastCompletedMode: null,
 
   start: () => {
     const { status, mode } = get()
@@ -103,13 +107,16 @@ export const useTimerStore = create<TimerState>((set, get) => ({
       }
 
       const nextMode: TimerMode = mode === 'focus' ? 'break' : 'focus'
+      const completedAt = Date.now()
       set({
         mode: nextMode,
         status: 'running',
         timeLeft: getDurationForMode(nextMode),
-        sessionStart: Date.now(),
+        sessionStart: completedAt,
         backgroundedAt: null,
         completedToday: mode === 'focus' ? completedToday + 1 : completedToday,
+        lastCompletionAt: completedAt,
+        lastCompletedMode: mode,
       })
       return
     }
@@ -150,6 +157,8 @@ export const useTimerStore = create<TimerState>((set, get) => ({
         sessionStart: nextSessionStart,
         backgroundedAt: null,
         completedToday: mode === 'focus' ? completedToday + 1 : completedToday,
+        lastCompletionAt: nextSessionStart,
+        lastCompletedMode: mode,
       })
 
       return session

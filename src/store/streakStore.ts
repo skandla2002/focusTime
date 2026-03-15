@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import type { StudyRecord, StreakSnapshot } from '../types'
+import i18n from '../i18n'
 import { getRecords, getStreakData, getTodayString, saveStreakData } from '../utils/storage'
 
 export interface StreakMetrics {
@@ -29,7 +30,7 @@ function getHighestMilestone(streak: number): number {
 }
 
 function getCelebrationMessage(streak: number): string {
-  return `Streak unlocked: ${streak} days in a row. Keep the momentum going.`
+  return i18n.t('streak.celebration', { count: streak })
 }
 
 export function calculateStreakMetrics(
