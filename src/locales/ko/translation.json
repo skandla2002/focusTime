@@ -25,7 +25,8 @@
     "home": "홈",
     "timer": "타이머",
     "statistics": "통계",
-    "goal": "목표"
+    "goal": "목표",
+    "memo": "메모"
   },
   "home": {
     "greetingMorning": "좋은 아침이에요. 집중해서 시작해볼까요?",
@@ -151,6 +152,24 @@
     "interstitialLabel": "광고",
     "interstitialBody": "AdMob 전면 광고",
     "interstitialSubtext": "(전면 광고 영역)"
+  },
+  "memoInput": {
+    "title": "무엇을 공부했나요?",
+    "description": "방금 끝난 집중 세션에 대한 짧은 메모를 남겨보세요.",
+    "placeholder": "무엇을 공부했는지 간단히 적어보세요...",
+    "helper": "{{count}} / 500자",
+    "skip": "건너뛰기",
+    "save": "메모 저장"
+  },
+  "memoScreen": {
+    "title": "세션 메모",
+    "subtitle": "완료한 집중 세션의 메모를 모아보고 검색할 수 있어요.",
+    "searchPlaceholder": "메모 검색",
+    "exact": "정확",
+    "fuzzy": "유사",
+    "empty": "아직 메모가 없어요. 집중 세션을 마친 뒤 첫 메모를 남겨보세요.",
+    "noResults": "검색 결과가 없어요.",
+    "duration": "{{minutes}}분 집중"
   },
   "streak": {
     "celebration": "{{count}}일 연속 집중했어요. 이 흐름을 계속 이어가보세요."

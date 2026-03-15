@@ -25,7 +25,8 @@
     "home": "Home",
     "timer": "Timer",
     "statistics": "Statistics",
-    "goal": "Goal"
+    "goal": "Goal",
+    "memo": "Memos"
   },
   "home": {
     "greetingMorning": "Good morning. Ready for a focused start?",
@@ -151,6 +152,24 @@
     "interstitialLabel": "Advertisement",
     "interstitialBody": "AdMob Interstitial Ad",
     "interstitialSubtext": "(full-screen ad area)"
+  },
+  "memoInput": {
+    "title": "What did you work on?",
+    "description": "Capture one quick note for the session you just finished.",
+    "placeholder": "Write a short memo about what you studied...",
+    "helper": "{{count}} / 500 characters",
+    "skip": "Skip",
+    "save": "Save memo"
+  },
+  "memoScreen": {
+    "title": "Session memos",
+    "subtitle": "Browse and search notes from completed focus sessions.",
+    "searchPlaceholder": "Search memos",
+    "exact": "Exact",
+    "fuzzy": "Fuzzy",
+    "empty": "No memos yet. Finish a focus session and save your first note.",
+    "noResults": "No memos matched your search.",
+    "duration": "{{minutes}} min focus"
   },
   "streak": {
     "celebration": "Streak unlocked: {{count}} days in a row. Keep the momentum going."

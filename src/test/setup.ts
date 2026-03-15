@@ -1,5 +1,6 @@
 import { afterEach, vi } from 'vitest'
 import { cleanup } from '@testing-library/react'
+import 'fake-indexeddb/auto'
 import '../i18n'
 
 vi.mock('@capacitor/core', () => ({

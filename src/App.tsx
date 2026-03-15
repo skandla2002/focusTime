@@ -11,6 +11,7 @@ import { Navigation } from './components/Navigation'
 import { GoalScreen } from './screens/GoalScreen'
 import { HomeScreen } from './screens/HomeScreen'
 import { LoginScreen } from './screens/LoginScreen'
+import { MemoScreen } from './screens/MemoScreen'
 import { StatisticsScreen } from './screens/StatisticsScreen'
 import { TimerScreen } from './screens/TimerScreen'
 import { useAppStore } from './store/appStore'
@@ -60,6 +61,7 @@ function AppContent() {
       {screen === 'timer' && <TimerScreen />}
       {screen === 'statistics' && <StatisticsScreen />}
       {screen === 'goal' && <GoalScreen />}
+      {screen === 'memo' && <MemoScreen />}
 
       {!isLoginScreen && <BannerAd />}
       {!isLoginScreen && <Navigation current={screen} onNavigate={navigate} />}

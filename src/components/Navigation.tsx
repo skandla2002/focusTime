@@ -14,6 +14,7 @@ const NAV_ITEMS: NavItem[] = [
   { screen: 'timer', icon: '⏱', translationKey: 'nav.timer' },
   { screen: 'statistics', icon: '📊', translationKey: 'nav.statistics' },
   { screen: 'goal', icon: '🎯', translationKey: 'nav.goal' },
+  { screen: 'memo', icon: '📝', translationKey: 'nav.memo' },
 ]
 
 interface Props {

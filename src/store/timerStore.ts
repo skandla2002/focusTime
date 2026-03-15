@@ -12,6 +12,7 @@ interface TimerState {
   backgroundedAt: number | null
   lastCompletionAt: number | null
   lastCompletedMode: TimerMode | null
+  lastCompletedSession: FocusSession | null
   start: () => void
   pause: () => void
   reset: () => void
@@ -34,6 +35,7 @@ export const useTimerStore = create<TimerState>((set, get) => ({
   backgroundedAt: null,
   lastCompletionAt: null,
   lastCompletedMode: null,
+  lastCompletedSession: null,
 
   start: () => {
     const { status, mode } = get()
@@ -94,11 +96,19 @@ export const useTimerStore = create<TimerState>((set, get) => ({
 
     if (remaining <= 0) {
       let durationMinutes = 0
+      let session: FocusSession | null = null
 
       if (mode === 'focus' && sessionStart) {
         const now = Date.now()
         const durationSeconds = Math.round((now - sessionStart) / 1000)
         durationMinutes = Math.max(1, Math.round(durationSeconds / 60))
+        session = {
+          id: `session_${now}`,
+          startTime: sessionStart,
+          endTime: now,
+          duration: durationMinutes,
+          date: new Date().toISOString().split('T')[0],
+        }
         void trackEvent('timer_complete', {
           duration_minutes: durationMinutes,
           completed_today: completedToday + 1,
@@ -117,6 +127,7 @@ export const useTimerStore = create<TimerState>((set, get) => ({
         completedToday: mode === 'focus' ? completedToday + 1 : completedToday,
         lastCompletionAt: completedAt,
         lastCompletedMode: mode,
+        lastCompletedSession: session,
       })
       return
     }
@@ -159,6 +170,7 @@ export const useTimerStore = create<TimerState>((set, get) => ({
         completedToday: mode === 'focus' ? completedToday + 1 : completedToday,
         lastCompletionAt: nextSessionStart,
         lastCompletedMode: mode,
+        lastCompletedSession: session,
       })
 
       return session

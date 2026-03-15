@@ -11,7 +11,15 @@
       "Bash(pnpm build:*)",
       "Bash(echo $ANDROID_HOME $ANDROID_SDK_ROOT)",
       "Bash(npx tsc:*)",
-      "Bash(npx vitest:*)"
+      "Bash(npx vitest:*)",
+      "Bash(find c:StudyAIAIAppsforcusTimersrc -name types*)",
+      "Bash(grep -r FocusSession c:StudyAIAIAppsforcusTimersrc --include=*.ts -l)",
+      "Bash(npx playwright:*)",
+      "Bash(find c:StudyAIAIAppsforcusTimersrc -name *.json -path */locales/*)",
+      "Bash(find c:StudyAIAIAppsforcusTimersrc -name translation*)",
+      "Bash(find c:StudyAIAIAppsforcusTimerpublic -name *.json)",
+      "Bash(find c:StudyAIAIAppsforcusTimertest-results -name *.png)",
+      "Bash(curl -s http://localhost:5173 -o /dev/null -w \"%{http_code}\")"
     ]
   }
 }

@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import type { FocusSession } from '../types'
 import { BREAK_DURATION, FOCUS_DURATION } from '../types'
+import { MemoInputModal } from '../components/MemoInputModal'
 import shared from '../styles/shared.module.css'
 import { useAppStore } from '../store/appStore'
+import { useMemoStore } from '../store/memoStore'
 import { useStudyStore } from '../store/studyStore'
 import { useTimerStore } from '../store/timerStore'
 import { playCompletionAlert } from '../utils/completionAlert'
@@ -28,25 +31,27 @@ export function TimerScreen() {
     completedToday,
     lastCompletionAt,
     lastCompletedMode,
+    lastCompletedSession,
   } = useTimerStore()
   const { addSession } = useStudyStore()
+  const { loadAll, loaded, getMemoBySessionId, saveMemo } = useMemoStore()
   const { focusLock, setFocusLock, triggerInterstitial } = useAppStore()
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const completionRef = useRef<number | null>(null)
+  const processedSessionIdsRef = useRef<Set<string>>(new Set())
   const wakeLockRef = useRef<WakeLockSentinel | null>(null)
   const [lastCompletedDuration, setLastCompletedDuration] = useState<string | null>(null)
   const [completionNotice, setCompletionNotice] = useState<CompletionNotice | null>(null)
+  const [pendingMemoSession, setPendingMemoSession] = useState<FocusSession | null>(null)
+
+  useEffect(() => {
+    void loadAll()
+  }, [loadAll])
 
   useEffect(() => {
     if (status === 'running') {
       intervalRef.current = setInterval(() => {
-        const session = tick()
-        if (session) {
-          const duration = formatMinutes(session.duration)
-          void addSession(session)
-          setLastCompletedDuration(duration)
-          triggerInterstitial()
-        }
+        tick()
       }, 1000)
     } else if (intervalRef.current) {
       clearInterval(intervalRef.current)
@@ -58,7 +63,7 @@ export function TimerScreen() {
         clearInterval(intervalRef.current)
       }
     }
-  }, [status, tick, addSession, triggerInterstitial])
+  }, [status, tick])
 
   useEffect(() => {
     if (!lastCompletionAt || lastCompletionAt === completionRef.current || !lastCompletedMode) {
@@ -84,15 +89,37 @@ export function TimerScreen() {
   }, [lastCompletedDuration, lastCompletedMode, lastCompletionAt, t])
 
   useEffect(() => {
+    if (!loaded || !lastCompletedSession) {
+      return
+    }
+
+    if (processedSessionIdsRef.current.has(lastCompletedSession.id)) {
+      return
+    }
+
+    processedSessionIdsRef.current.add(lastCompletedSession.id)
+    setLastCompletedDuration(formatMinutes(lastCompletedSession.duration))
+    void addSession(lastCompletedSession)
+
+    if (getMemoBySessionId(lastCompletedSession.id)) {
+      triggerInterstitial()
+      return
+    }
+
+    setPendingMemoSession(lastCompletedSession)
+  }, [addSession, getMemoBySessionId, lastCompletedSession, loaded, triggerInterstitial])
+
+  useEffect(() => {
     const acquireWakeLock = async () => {
       if ('wakeLock' in navigator) {
         try {
           wakeLockRef.current = await navigator.wakeLock.request('screen')
         } catch {
-          // 절전 모드 또는 권한 거부 — 무시
+          // Ignore unsupported or blocked wake lock requests.
         }
       }
     }
+
     const releaseWakeLock = () => {
       wakeLockRef.current?.release().catch(() => {})
       wakeLockRef.current = null
@@ -109,6 +136,7 @@ export function TimerScreen() {
         void acquireWakeLock()
       }
     }
+
     document.addEventListener('visibilitychange', handleVisibilityChange)
 
     return () => {
@@ -116,6 +144,21 @@ export function TimerScreen() {
       releaseWakeLock()
     }
   }, [status])
+
+  async function handleSaveMemo(memo: string) {
+    if (!pendingMemoSession) {
+      return
+    }
+
+    await saveMemo(pendingMemoSession.id, pendingMemoSession.date, memo)
+    setPendingMemoSession(null)
+    triggerInterstitial()
+  }
+
+  function handleSkipMemo() {
+    setPendingMemoSession(null)
+    triggerInterstitial()
+  }
 
   const totalDuration = mode === 'focus' ? FOCUS_DURATION : BREAK_DURATION
   const progress = (timeLeft / totalDuration) * 100
@@ -174,6 +217,15 @@ export function TimerScreen() {
             <div className={styles.completionBody}>{completionNotice.body}</div>
           </div>
         </div>
+      )}
+
+      {pendingMemoSession && (
+        <MemoInputModal
+          sessionId={pendingMemoSession.id}
+          date={pendingMemoSession.date}
+          onSave={handleSaveMemo}
+          onSkip={handleSkipMemo}
+        />
       )}
 
       <div className={styles.timerDisplay}>

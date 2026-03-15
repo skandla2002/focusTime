@@ -25,7 +25,8 @@
     "home": "首页",
     "timer": "计时器",
     "statistics": "统计",
-    "goal": "目标"
+    "goal": "目标",
+    "memo": "备忘"
   },
   "home": {
     "greetingMorning": "早上好，准备开始专注了吗？",
@@ -151,6 +152,24 @@
     "interstitialLabel": "广告",
     "interstitialBody": "AdMob 插屏广告",
     "interstitialSubtext": "（全屏广告区域）"
+  },
+  "memoInput": {
+    "title": "这一段你做了什么？",
+    "description": "为刚完成的专注时段记下一条简短备忘。",
+    "placeholder": "简单写下你刚刚学习了什么...",
+    "helper": "{{count}} / 500 字",
+    "skip": "跳过",
+    "save": "保存备忘"
+  },
+  "memoScreen": {
+    "title": "时段备忘",
+    "subtitle": "查看并搜索已完成专注时段的备忘内容。",
+    "searchPlaceholder": "搜索备忘",
+    "exact": "精确",
+    "fuzzy": "模糊",
+    "empty": "还没有备忘。完成一次专注后保存第一条记录吧。",
+    "noResults": "没有找到匹配的备忘。",
+    "duration": "专注 {{minutes}} 分钟"
   },
   "streak": {
     "celebration": "已达成连续 {{count}} 天专注，继续保持。"
