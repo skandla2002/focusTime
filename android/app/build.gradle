@@ -43,8 +43,9 @@ android {
         release {
             // Use an upload keystore when available, otherwise allow a local verification build.
             signingConfig hasReleaseSigning ? signingConfigs.release : signingConfigs.debug
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }

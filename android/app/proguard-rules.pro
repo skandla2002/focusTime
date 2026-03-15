@@ -19,3 +19,17 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Preserve line numbers for crash/ANR analysis in Play Console
+-keepattributes SourceFile,LineNumberTable
+
+# Capacitor core
+-keep class com.getcapacitor.** { *; }
+-dontwarn com.getcapacitor.**
+
+# App package
+-keep class com.skandla2002ai.focustimer.** { *; }
+
+# Capacitor plugins
+-keep class com.google.android.gms.ads.** { *; }
+-dontwarn com.google.android.gms.ads.**
