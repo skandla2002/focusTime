@@ -1,4 +1,4 @@
-package com.focustimer.app;
+package com.skandla2002ai.focustimer;
 
 import com.getcapacitor.BridgeActivity;
 

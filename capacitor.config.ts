@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli'
 
 const config: CapacitorConfig = {
-  appId: 'com.focustimer.app',
+  appId: 'com.skandla2002ai.focustimer',
   appName: 'FocusTimer',
   webDir: 'dist',
   server: {

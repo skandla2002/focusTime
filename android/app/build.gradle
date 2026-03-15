@@ -14,10 +14,10 @@ def hasReleaseSigning = keystorePropertiesFile.exists() &&
     file(keystoreProperties['storeFile']).exists()
 
 android {
-    namespace = "com.focustimer.app"
+    namespace = "com.skandla2002ai.focustimer"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.focustimer.app"
+        applicationId "com.skandla2002ai.focustimer"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
