@@ -13,7 +13,7 @@ async function showBanner() {
     adId: Capacitor.getPlatform() === 'ios' ? BANNER_AD_ID.ios : BANNER_AD_ID.android,
     adSize: BannerAdSize.ADAPTIVE_BANNER,
     position: BannerAdPosition.BOTTOM_CENTER,
-    margin: 60, // 탭바 높이만큼 위로
+    margin: 0, // GNB가 배너 위에 올라오므로 배너는 화면 최하단에 고정
     isTesting: import.meta.env.DEV,
   } satisfies BannerAdOptions)
 }

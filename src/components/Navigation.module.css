@@ -1,6 +1,6 @@
 .nav {
   position: fixed;
-  bottom: 0;
+  bottom: var(--banner-height);
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
