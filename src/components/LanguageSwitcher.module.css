@@ -1,7 +1,7 @@
 .switcher {
   display: inline-flex;
-  gap: 6px;
-  padding: 6px;
+  gap: 4px;
+  padding: 4px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid var(--border);
@@ -12,9 +12,12 @@
   border-radius: 999px;
   background: transparent;
   color: var(--text-secondary);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
-  padding: 8px 12px;
+  letter-spacing: 0.04em;
+  min-width: 32px;
+  padding: 4px 8px;
+  text-align: center;
   cursor: pointer;
 }
 

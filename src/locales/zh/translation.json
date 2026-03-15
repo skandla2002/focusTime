@@ -92,7 +92,10 @@
     "alertFocusTitle": "专注时间结束",
     "alertBreakTitle": "休息时间结束",
     "alertFocusBody": "短暂休息一下，再继续前进。",
-    "alertBreakBody": "休息结束了，现在回到专注吧。"
+    "alertBreakBody": "休息结束了，现在回到专注吧。",
+    "memoLabel": "本次专注备忘",
+    "memoPlaceholder": "你现在在专注什么？",
+    "memoHint": "计时结束时自动保存。"
   },
   "statistics": {
     "title": "统计",

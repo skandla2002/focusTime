@@ -43,6 +43,10 @@ export function TimerScreen() {
   const [lastCompletedDuration, setLastCompletedDuration] = useState<string | null>(null)
   const [completionNotice, setCompletionNotice] = useState<CompletionNotice | null>(null)
   const [pendingMemoSession, setPendingMemoSession] = useState<FocusSession | null>(null)
+  const [pendingMemoText, setPendingMemoText] = useState('')
+  // effect dep array 없이 최신값 읽기 위한 ref
+  const pendingMemoTextRef = useRef('')
+  pendingMemoTextRef.current = pendingMemoText
 
   useEffect(() => {
     void loadAll()
@@ -101,13 +105,21 @@ export function TimerScreen() {
     setLastCompletedDuration(formatMinutes(lastCompletedSession.duration))
     void addSession(lastCompletedSession)
 
-    if (getMemoBySessionId(lastCompletedSession.id)) {
-      triggerInterstitial()
-      return
-    }
+    const inlineMemo = pendingMemoTextRef.current.trim()
+    setPendingMemoText('')
 
-    setPendingMemoSession(lastCompletedSession)
-  }, [addSession, getMemoBySessionId, lastCompletedSession, loaded, triggerInterstitial])
+    if (inlineMemo) {
+      // 인라인 메모 있음 → 자동 저장, 모달 표시 안 함
+      void saveMemo(lastCompletedSession.id, lastCompletedSession.date, inlineMemo)
+      triggerInterstitial()
+    } else if (getMemoBySessionId(lastCompletedSession.id)) {
+      // 이미 메모 있음 → 모달 불필요
+      triggerInterstitial()
+    } else {
+      // 인라인 메모 없음 → 기존 모달 fallback
+      setPendingMemoSession(lastCompletedSession)
+    }
+  }, [addSession, getMemoBySessionId, lastCompletedSession, loaded, saveMemo, triggerInterstitial])
 
   useEffect(() => {
     const acquireWakeLock = async () => {
@@ -145,6 +157,16 @@ export function TimerScreen() {
     }
   }, [status])
 
+  function handleReset() {
+    reset()
+    setPendingMemoText('')
+  }
+
+  function handleSwitchMode(newMode: typeof mode) {
+    switchMode(newMode)
+    setPendingMemoText('')
+  }
+
   async function handleSaveMemo(memo: string) {
     if (!pendingMemoSession) {
       return
@@ -166,6 +188,8 @@ export function TimerScreen() {
   const dashOffset = circumference * (1 - progress / 100)
   const isPrimaryActionLocked = focusLock && status !== 'running'
   const lockButtonLabel = focusLock ? t('timer.disableLock') : t('timer.enableLock')
+  // 집중 모드 실행 중(또는 일시정지 상태에서 메모가 있을 때)에 인라인 메모 표시
+  const showMemoInput = mode === 'focus' && (status === 'running' || (status === 'paused' && pendingMemoText.length > 0))
 
   return (
     <div className={shared.screen}>
@@ -193,7 +217,7 @@ export function TimerScreen() {
         <button
           type="button"
           className={`${styles.modeTab} ${mode === 'focus' ? styles.active : ''}`}
-          onClick={() => switchMode('focus')}
+          onClick={() => handleSwitchMode('focus')}
           disabled={focusLock}
           aria-label={t('timer.focusMode')}
         >
@@ -202,7 +226,7 @@ export function TimerScreen() {
         <button
           type="button"
           className={`${styles.modeTab} ${mode === 'break' ? styles.active : ''}`}
-          onClick={() => switchMode('break')}
+          onClick={() => handleSwitchMode('break')}
           disabled={focusLock}
           aria-label={t('timer.breakMode')}
         >
@@ -254,7 +278,7 @@ export function TimerScreen() {
           <button
             type="button"
             className={`${shared.btn} ${shared.btnIcon}`}
-            onClick={reset}
+            onClick={handleReset}
             aria-label={t('timer.reset')}
           >
             {t('timer.resetShort')}
@@ -289,6 +313,22 @@ export function TimerScreen() {
           </button>
         </div>
       </div>
+
+      {showMemoInput && (
+        <div className={`${shared.card} ${styles.memoInline}`}>
+          <div className={styles.memoLabel}>{t('timer.memoLabel')}</div>
+          <textarea
+            className={styles.memoTextarea}
+            value={pendingMemoText}
+            onChange={(e) => setPendingMemoText(e.target.value)}
+            placeholder={t('timer.memoPlaceholder')}
+            aria-label={t('timer.memoLabel')}
+            maxLength={500}
+            rows={2}
+          />
+          <div className={styles.memoHint}>{t('timer.memoHint')}</div>
+        </div>
+      )}
 
       <div className={shared.card}>
         <div className={shared.cardTitle}>{t('timer.todayFocus')}</div>

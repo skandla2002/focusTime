@@ -210,3 +210,46 @@
 .dots-row {
   margin-top: 16px;
 }
+
+/* ── 집중 중 인라인 메모 입력 ── */
+.memo-inline {
+  animation: pop-in 0.2s ease;
+}
+
+.memo-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.memo-textarea {
+  width: 100%;
+  min-height: 72px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.6;
+  padding: 10px 12px;
+  resize: none;
+  outline: none;
+  font-family: var(--font);
+  transition: border-color 0.2s;
+}
+
+.memo-textarea:focus {
+  border-color: var(--color-primary);
+}
+
+.memo-textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.memo-hint {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: right;
+}

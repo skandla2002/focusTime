@@ -2,9 +2,9 @@ import { useTranslation } from 'react-i18next'
 import styles from './LanguageSwitcher.module.css'
 
 const LANGUAGES = [
-  { code: 'ko', translationKey: 'languageSwitcher.ko' },
-  { code: 'en', translationKey: 'languageSwitcher.en' },
-  { code: 'zh', translationKey: 'languageSwitcher.zh' },
+  { code: 'ko', label: 'KO', translationKey: 'languageSwitcher.ko' },
+  { code: 'en', label: 'EN', translationKey: 'languageSwitcher.en' },
+  { code: 'zh', label: 'ZH', translationKey: 'languageSwitcher.zh' },
 ] as const
 
 export function LanguageSwitcher() {
@@ -13,15 +13,16 @@ export function LanguageSwitcher() {
 
   return (
     <div className={styles.switcher} aria-label={t('languageSwitcher.label')}>
-      {LANGUAGES.map(({ code, translationKey }) => (
+      {LANGUAGES.map(({ code, label, translationKey }) => (
         <button
           key={code}
           type="button"
           className={`${styles.option} ${activeLanguage === code ? styles.active : ''}`}
           onClick={() => void i18n.changeLanguage(code)}
           aria-pressed={activeLanguage === code}
+          aria-label={`${t('languageSwitcher.label')}: ${t(translationKey)}`}
         >
-          {t(translationKey)}
+          {label}
         </button>
       ))}
     </div>

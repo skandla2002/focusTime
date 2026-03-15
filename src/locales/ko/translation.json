@@ -92,7 +92,10 @@
     "alertFocusTitle": "집중 시간이 끝났어요",
     "alertBreakTitle": "휴식 시간이 끝났어요",
     "alertFocusBody": "짧게 쉬고 다음 집중을 준비해보세요.",
-    "alertBreakBody": "휴식이 끝났어요. 다시 집중할 시간이에요."
+    "alertBreakBody": "휴식이 끝났어요. 다시 집중할 시간이에요.",
+    "memoLabel": "세션 메모",
+    "memoPlaceholder": "지금 무엇을 집중하고 있나요?",
+    "memoHint": "타이머 완료 시 자동 저장됩니다."
   },
   "statistics": {
     "title": "통계",

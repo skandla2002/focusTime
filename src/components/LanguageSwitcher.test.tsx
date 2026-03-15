@@ -9,12 +9,20 @@ describe('language switcher', () => {
     await i18n.changeLanguage('en')
   })
 
-  it('[LanguageSwitcher] should change the active language when a button is clicked', async () => {
+  it('[LanguageSwitcher] should render compact language badges and change language on click', async () => {
     const user = userEvent.setup()
 
     render(<LanguageSwitcher />)
 
-    await user.click(screen.getByRole('button', { name: '中文' }))
+    const koButton = screen.getByText('KO').closest('button')
+    const enButton = screen.getByText('EN').closest('button')
+    const zhButton = screen.getByText('ZH').closest('button')
+
+    expect(koButton?.getAttribute('aria-pressed')).toBe('false')
+    expect(enButton?.getAttribute('aria-pressed')).toBe('true')
+    expect(zhButton?.getAttribute('aria-pressed')).toBe('false')
+
+    await user.click(screen.getByText('ZH'))
 
     expect(i18n.language).toBe('zh')
   })

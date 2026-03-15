@@ -92,7 +92,10 @@
     "alertFocusTitle": "Focus time is up",
     "alertBreakTitle": "Break time is up",
     "alertFocusBody": "Take a short break and come back ready.",
-    "alertBreakBody": "Break is over. Time to focus again."
+    "alertBreakBody": "Break is over. Time to focus again.",
+    "memoLabel": "Session memo",
+    "memoPlaceholder": "What are you focusing on right now?",
+    "memoHint": "Auto-saved when the timer finishes."
   },
   "statistics": {
     "title": "Statistics",
