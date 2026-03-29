@@ -54,3 +54,21 @@
 - ISSUE-054: `MemoDropdown` 컴포넌트 — textarea 포커스/입력 시 최근·자주·Fuse.js 검색 드롭다운
 
 **관련 이슈**: ISSUE-046, ISSUE-047, ISSUE-048, ISSUE-049, ISSUE-050, ISSUE-051, ISSUE-052, ISSUE-053, ISSUE-054
+
+### [2026-03-29] ISSUE-055~057: 집중 잠금 포커스 실드 + 흑백 모드
+
+#### 원문 (brief.md 입력)
+> - 집중모드에 '잠금'을 하게 되면 전체 화면을 어둡게 감싸는 레이어가 떠서 집중시에 사람의 시선에 방해가 되지 않았으면해. 이부분 더 좋은 방법이 있다면 추가로 정리해줘
+> - 흑백 모드도 추가로 만들어줘. 흑백 모드는 생상이 전체 흑백 사진과 같이 보여서 눈의 피로가 적게 할수 있도록 하고, 상단 아이콘으로 클릭시 칼라모드/흑백모드 선택하는 것 추가해줘. 이때 흑백 모드의 경우 디자인 token 부터 우선 추가되는 작업해주고, 이후 디자인 스타일 개선되는 것까지 고려해서 만들어줘.
+
+#### 상세화된 규칙 / 조건
+- ISSUE-055: 전체 차단형 검은 레이어보다 비필수 UI를 어둡게 내리고 타이머 핵심 UI를 살리는 `포커스 실드` 방식으로 계획
+- ISSUE-055: `focusLock && focus mode`에서만 노출하고, 시작/계속/잠금 등 핵심 제어는 계속 조작 가능해야 함
+- ISSUE-056: 흑백 모드는 `filter: grayscale(1)`가 아니라 semantic design token 기반으로 설계
+- ISSUE-056: `design-tokens.json`과 `generate-tokens.mjs`를 확장해 color / grayscale 모드 CSS 변수를 함께 생성
+- ISSUE-056: 시각 모드 선택은 앱 상태와 localStorage에 저장되어 재진입 후에도 유지
+- ISSUE-057: 상단 아이콘 토글로 color / grayscale 모드를 전환할 수 있어야 함
+- ISSUE-057: Home/Login/Timer/Statistics/Goal/Memo 등 주요 화면이 흑백 모드에서 읽히도록 공용 스타일과 화면별 강조색을 semantic token으로 치환
+- ISSUE-057: 차트·진행바·타이머 링도 명도 대비 중심으로 재설계해 흑백 모드에서 구분 가능해야 함
+
+**관련 이슈**: ISSUE-055, ISSUE-056, ISSUE-057
