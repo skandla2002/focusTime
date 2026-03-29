@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { FocusSession } from '../types'
 import { BREAK_DURATION, FOCUS_DURATION } from '../types'
+import { MemoDropdown } from '../components/MemoDropdown'
 import { MemoInputModal } from '../components/MemoInputModal'
 import shared from '../styles/shared.module.css'
 import { useAppStore } from '../store/appStore'
@@ -44,6 +45,7 @@ export function TimerScreen() {
   const [completionNotice, setCompletionNotice] = useState<CompletionNotice | null>(null)
   const [pendingMemoSession, setPendingMemoSession] = useState<FocusSession | null>(null)
   const [pendingMemoText, setPendingMemoText] = useState('')
+  const [showMemoDropdown, setShowMemoDropdown] = useState(false)
   // effect dep array 없이 최신값 읽기 위한 ref
   const pendingMemoTextRef = useRef('')
   pendingMemoTextRef.current = pendingMemoText
@@ -160,11 +162,13 @@ export function TimerScreen() {
   function handleReset() {
     reset()
     setPendingMemoText('')
+    setShowMemoDropdown(false)
   }
 
   function handleSwitchMode(newMode: typeof mode) {
     switchMode(newMode)
     setPendingMemoText('')
+    setShowMemoDropdown(false)
   }
 
   async function handleSaveMemo(memo: string) {

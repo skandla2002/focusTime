@@ -21,6 +21,10 @@ describe('timer store', () => {
       lastCompletionAt: null,
       lastCompletedMode: null,
       lastCompletedSession: null,
+      savedModeState: {
+        focus: null,
+        break: null,
+      },
     })
   })
 
@@ -77,10 +81,10 @@ describe('timer store', () => {
     })
   })
 
-  it('[timerStore] should switch modes and clear any in-progress state', () => {
+  it('[timerStore] should switch to a new mode and preserve the current session as paused state', () => {
     useTimerStore.setState({
       status: 'running',
-      timeLeft: 12,
+      timeLeft: 321,
       sessionStart: Date.now() - 60_000,
       backgroundedAt: Date.now() - 5_000,
     })
@@ -93,6 +97,45 @@ describe('timer store', () => {
       timeLeft: BREAK_DURATION,
       sessionStart: null,
       backgroundedAt: null,
+      savedModeState: {
+        focus: {
+          timeLeft: 321,
+          sessionStart: Date.now() - 60_000,
+        },
+        break: null,
+      },
+    })
+  })
+
+  it('[timerStore] should restore a saved paused session when switching back to the previous mode', () => {
+    const focusSessionStart = Date.now() - 120_000
+
+    useTimerStore.setState({
+      mode: 'break',
+      status: 'idle',
+      timeLeft: BREAK_DURATION,
+      sessionStart: null,
+      savedModeState: {
+        focus: {
+          timeLeft: 444,
+          sessionStart: focusSessionStart,
+        },
+        break: null,
+      },
+    })
+
+    useTimerStore.getState().switchMode('focus')
+
+    expect(useTimerStore.getState()).toMatchObject({
+      mode: 'focus',
+      status: 'paused',
+      timeLeft: 444,
+      sessionStart: focusSessionStart,
+      backgroundedAt: null,
+      savedModeState: {
+        focus: null,
+        break: null,
+      },
     })
   })
 
@@ -119,6 +162,13 @@ describe('timer store', () => {
       status: 'running',
       timeLeft: 1,
       completedToday: 3,
+      savedModeState: {
+        focus: {
+          timeLeft: 777,
+          sessionStart: Date.now() - 30_000,
+        },
+        break: null,
+      },
     })
 
     const session = useTimerStore.getState().tick()
@@ -129,6 +179,7 @@ describe('timer store', () => {
     expect(useTimerStore.getState().timeLeft).toBe(25 * 60)
     expect(useTimerStore.getState().completedToday).toBe(3)
     expect(useTimerStore.getState().sessionStart).toBe(Date.now())
+    expect(useTimerStore.getState().savedModeState.focus).toBeNull()
   })
 
   it('[timerStore] should store the background timestamp only when the timer is running', () => {
@@ -167,6 +218,13 @@ describe('timer store', () => {
       timeLeft: 10,
       sessionStart: Date.now() - 25 * 60 * 1000,
       backgroundedAt: Date.now() - 20 * 1000,
+      savedModeState: {
+        focus: null,
+        break: {
+          timeLeft: 99,
+          sessionStart: Date.now() - 10_000,
+        },
+      },
     })
 
     useTimerStore.getState().onForeground()
@@ -176,5 +234,43 @@ describe('timer store', () => {
     expect(useTimerStore.getState().timeLeft).toBe(BREAK_DURATION)
     expect(useTimerStore.getState().completedToday).toBe(1)
     expect(useTimerStore.getState().sessionStart).toBe(Date.now())
+    expect(useTimerStore.getState().savedModeState.break).toBeNull()
+  })
+
+  it('[timerStore] should clear only the current mode saved state when reset is called', () => {
+    useTimerStore.setState({
+      mode: 'focus',
+      status: 'paused',
+      timeLeft: 420,
+      sessionStart: Date.now() - 30_000,
+      backgroundedAt: Date.now() - 5_000,
+      savedModeState: {
+        focus: {
+          timeLeft: 420,
+          sessionStart: Date.now() - 30_000,
+        },
+        break: {
+          timeLeft: 180,
+          sessionStart: Date.now() - 15_000,
+        },
+      },
+    })
+
+    useTimerStore.getState().reset()
+
+    expect(useTimerStore.getState()).toMatchObject({
+      mode: 'focus',
+      status: 'idle',
+      timeLeft: 25 * 60,
+      sessionStart: null,
+      backgroundedAt: null,
+      savedModeState: {
+        focus: null,
+        break: {
+          timeLeft: 180,
+          sessionStart: Date.now() - 15_000,
+        },
+      },
+    })
   })
 })

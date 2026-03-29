@@ -3,6 +3,11 @@ import type { FocusSession, TimerMode, TimerStatus } from '../types'
 import { BREAK_DURATION, FOCUS_DURATION } from '../types'
 import { trackEvent } from '../utils/analytics'
 
+interface SavedModeState {
+  timeLeft: number
+  sessionStart: number | null
+}
+
 interface TimerState {
   mode: TimerMode
   status: TimerStatus
@@ -13,6 +18,7 @@ interface TimerState {
   lastCompletionAt: number | null
   lastCompletedMode: TimerMode | null
   lastCompletedSession: FocusSession | null
+  savedModeState: Record<TimerMode, SavedModeState | null>
   start: () => void
   pause: () => void
   reset: () => void
@@ -36,6 +42,10 @@ export const useTimerStore = create<TimerState>((set, get) => ({
   lastCompletionAt: null,
   lastCompletedMode: null,
   lastCompletedSession: null,
+  savedModeState: {
+    focus: null,
+    break: null,
+  },
 
   start: () => {
     const { status, mode } = get()
@@ -59,22 +69,40 @@ export const useTimerStore = create<TimerState>((set, get) => ({
   },
 
   reset: () => {
-    const { mode } = get()
+    const { mode, savedModeState } = get()
     set({
       status: 'idle',
       timeLeft: getDurationForMode(mode),
       sessionStart: null,
       backgroundedAt: null,
+      savedModeState: {
+        ...savedModeState,
+        [mode]: null,
+      },
     })
   },
 
-  switchMode: (mode) => {
+  switchMode: (newMode) => {
+    const { mode, status, timeLeft, sessionStart, savedModeState } = get()
+
+    if (mode === newMode) {
+      return
+    }
+
+    const shouldSave = status === 'running' || status === 'paused'
+    const restoredState = savedModeState[newMode]
+
     set({
-      mode,
-      status: 'idle',
-      timeLeft: getDurationForMode(mode),
-      sessionStart: null,
+      mode: newMode,
+      status: restoredState ? 'paused' : 'idle',
+      timeLeft: restoredState ? restoredState.timeLeft : getDurationForMode(newMode),
+      sessionStart: restoredState ? restoredState.sessionStart : null,
       backgroundedAt: null,
+      savedModeState: {
+        ...savedModeState,
+        [mode]: shouldSave ? { timeLeft, sessionStart } : null,
+        [newMode]: null,
+      },
     })
   },
 
@@ -86,7 +114,8 @@ export const useTimerStore = create<TimerState>((set, get) => ({
   },
 
   onForeground: () => {
-    const { status, backgroundedAt, timeLeft, mode, sessionStart, completedToday } = get()
+    const { status, backgroundedAt, timeLeft, mode, sessionStart, completedToday, savedModeState } =
+      get()
     if (status !== 'running' || backgroundedAt === null) {
       return
     }
@@ -128,6 +157,11 @@ export const useTimerStore = create<TimerState>((set, get) => ({
         lastCompletionAt: completedAt,
         lastCompletedMode: mode,
         lastCompletedSession: session,
+        savedModeState: {
+          ...savedModeState,
+          [mode]: null,
+          [nextMode]: null,
+        },
       })
       return
     }
@@ -136,7 +170,7 @@ export const useTimerStore = create<TimerState>((set, get) => ({
   },
 
   tick: (): FocusSession | null => {
-    const { timeLeft, mode, sessionStart, completedToday } = get()
+    const { timeLeft, mode, sessionStart, completedToday, savedModeState } = get()
 
     if (timeLeft <= 1) {
       let session: FocusSession | null = null
@@ -171,6 +205,11 @@ export const useTimerStore = create<TimerState>((set, get) => ({
         lastCompletionAt: nextSessionStart,
         lastCompletedMode: mode,
         lastCompletedSession: session,
+        savedModeState: {
+          ...savedModeState,
+          [mode]: null,
+          [nextMode]: null,
+        },
       })
 
       return session

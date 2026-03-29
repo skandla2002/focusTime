@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   Chart as ChartJS,
@@ -15,8 +15,10 @@ import {
 import type { TooltipItem } from 'chart.js'
 import { Bar, Line } from 'react-chartjs-2'
 import { useAppStore } from '../store/appStore'
+import { useMemoStore } from '../store/memoStore'
 import { useStudyStore } from '../store/studyStore'
 import { trackEvent } from '../utils/analytics'
+import { getTopWords, getHourlyDistribution } from '../utils/memoStats'
 import { shareStudyResult } from '../utils/share'
 import { formatDate, formatMinutes, getDayLabel } from '../utils/time'
 import shared from '../styles/shared.module.css'
@@ -38,6 +40,7 @@ export function StatisticsScreen() {
   const { t } = useTranslation()
   const { records, getWeekData, getMonthData, getTodayMinutes, getTotalMinutes } = useStudyStore()
   const { triggerInterstitial } = useAppStore()
+  const { memos, loadAll, loaded } = useMemoStore()
   const triggeredRef = useRef(false)
   const [shareFeedback, setShareFeedback] = useState<string | null>(null)
 
@@ -58,6 +61,10 @@ export function StatisticsScreen() {
     return () => clearTimeout(timer)
   }, [shareFeedback])
 
+  useEffect(() => {
+    if (!loaded) void loadAll()
+  }, [loaded, loadAll])
+
   const weekData = getWeekData()
   const monthData = getMonthData()
   const todayMinutes = getTodayMinutes()
@@ -65,6 +72,10 @@ export function StatisticsScreen() {
   const todayKey = new Date().toISOString().split('T')[0]
   const todayRecord = records.find((record) => record.date === todayKey)
   const todaySessions = todayRecord?.sessions.length ?? 0
+
+  const topWords = getTopWords(memos)
+  const hourlyDist = getHourlyDistribution(memos)
+  const maxHourCount = Math.max(...hourlyDist, 1)
 
   const activeDays = weekData.filter((day) => day.minutes > 0).length
   const weekTotal = weekData.reduce((sum, day) => sum + day.minutes, 0)
@@ -251,6 +262,51 @@ export function StatisticsScreen() {
           <span className={shared.statLabel}>{t('statistics.totalFocusTime')}</span>
           <span className={`${shared.statValue} ${shared.accent}`}>{formatMinutes(totalMinutes)}</span>
         </div>
+      </div>
+
+      <div className={shared.card}>
+        <div className={styles.chartTitle}>{t('statistics.topWordsTitle')}</div>
+        {topWords.length === 0 ? (
+          <div className={styles.memoStatsEmpty}>{t('statistics.memoStatsEmpty')}</div>
+        ) : (
+          <div className={styles.wordList}>
+            {topWords.map(({ word, count }) => (
+              <div key={word} className={styles.wordRow}>
+                <span className={styles.wordLabel}>{word}</span>
+                <div className={styles.wordBarWrap}>
+                  <div
+                    className={styles.wordBar}
+                    style={{ '--bar-pct': `${(count / topWords[0].count) * 100}%` } as React.CSSProperties}
+                  />
+                </div>
+                <span className={styles.wordCount}>{count}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className={shared.card}>
+        <div className={styles.chartTitle}>{t('statistics.hourlyTitle')}</div>
+        {memos.length === 0 ? (
+          <div className={styles.memoStatsEmpty}>{t('statistics.memoStatsEmpty')}</div>
+        ) : (
+          <div className={styles.hourlyChart}>
+            {hourlyDist.map((count, hour) => (
+              <div key={hour} className={styles.hourlyBarWrap}>
+                <div
+                  className={styles.hourlyBar}
+                  style={{ '--bar-pct': `${(count / maxHourCount) * 100}%` } as React.CSSProperties}
+                />
+                {hour % 6 === 0 && (
+                  <span className={`${styles.hourlyLabel} ${count > 0 ? styles.hourlyLabelVisible : ''}`}>
+                    {hour}{t('statistics.hourSuffix')}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className={`${shared.card} ${styles.shareCard}`}>
