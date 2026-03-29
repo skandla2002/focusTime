@@ -21,3 +21,7 @@
 - 작업 전: .workflowSvc/workflow/2.plan.md → [x] 항목 확인
 - 완료 기준: .workflowSvc/docs/specs/dod.md
 - 빠른 파일 참조: .workflowSvc/ai/file-map.md
+## Plan Archive
+- 2.plan.md keeps only open issues.
+- Completed checklist items move to history.md.
+- Completed detailed specs move to .workflowSvc/workflow/completed-details.md.

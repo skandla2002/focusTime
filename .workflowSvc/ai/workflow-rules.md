@@ -1,4 +1,4 @@
-# Workflow Rules (AI 전용)
+﻿# Workflow Rules (AI 전용)
 
 ## 1. brief → plan 변환 규칙
 
@@ -188,3 +188,23 @@ brief.md 입력을 plan.md 이슈로 변환하여 **상세 조건·제약을 규
 | 📋 ISSUE 구현 | .workflowSvc/workflow/implementation.md → test-annotations.md |
 | 버그 발생 | .workflowSvc/docs/bugs/buglist.md → plan.md 이슈 추가 |
 | 이슈 완료 | .workflowSvc/workflow/3.review.md → commit → .workflowSvc/docs/ 업데이트 |
+## 8. Plan Archive Rules
+### plan.md scope
+- 2.plan.md must stay lean and contain only not-yet-completed issues.
+- Completed issues must not remain in either:
+  - the issue checklist section
+  - the issue detail section
+### required archive flow on completion
+When an issue is completed and recorded, update the workflow files in this order:
+1. Add the completion summary to .workflowSvc/workflow/history.md
+2. Move the completed checklist item from 2.plan.md into the history.md section ## Completed Issue List (Moved From plan.md)
+3. Move the full completed issue detail section from 2.plan.md into .workflowSvc/workflow/completed-details.md
+4. Remove that completed checklist item and detailed section from .workflowSvc/workflow/2.plan.md
+### archive formatting
+- history.md keeps:
+  - compact completed issue list
+  - chronological completion history entries
+- completed-details.md keeps:
+  - the original detailed issue specs that were previously stored in 2.plan.md
+- If multiple issues are completed together, archive all of them in the same pass so 2.plan.md never grows with stale completed content.
+

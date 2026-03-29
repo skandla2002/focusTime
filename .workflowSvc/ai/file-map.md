@@ -32,3 +32,11 @@
 | .workflowSvc/ai/workflow-rules.md | 워크플로우 상세 규칙 |
 | .workflowSvc/docs/bugs/buglist.md | 기존 버그 현황 |
 | .workflowSvc/docs/architecture/improvements.md | 프로젝트 개선사항 목록 (작성된 경우) |
+
+## Archive
+
+| File | Purpose |
+| ---- | ---- |
+| .workflowSvc/workflow/history.md | Completed issue list moved from 2.plan.md plus chronological completion history |
+| .workflowSvc/workflow/completed-details.md | Archived detailed issue specs moved out of 2.plan.md after completion |
+| .workflowSvc/workflow/2.plan.md | Open issues only; completed items must be archived out |
