@@ -24,7 +24,10 @@ interface Props {
 
 export function Navigation({ current, onNavigate }: Props) {
   const { t } = useTranslation()
-  const focusLock = useAppStore((state) => state.focusLock)
+  const { focusLock, triggerStatisticsAd } = useAppStore((state) => ({
+    focusLock: state.focusLock,
+    triggerStatisticsAd: state.triggerStatisticsAd,
+  }))
 
   return (
     <nav className={styles.nav} role="navigation" aria-label="Primary navigation">
@@ -36,7 +39,10 @@ export function Navigation({ current, onNavigate }: Props) {
             key={screen}
             type="button"
             className={`${styles.navItem} ${current === screen ? styles.active : ''}`}
-            onClick={() => onNavigate(screen)}
+            onClick={() => {
+              if (screen === 'statistics') triggerStatisticsAd()
+              onNavigate(screen)
+            }}
             aria-label={label}
             aria-current={current === screen ? 'page' : undefined}
             disabled={focusLock}

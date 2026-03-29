@@ -186,7 +186,6 @@ export function TimerScreen() {
   const progress = (timeLeft / totalDuration) * 100
   const circumference = 2 * Math.PI * 110
   const dashOffset = circumference * (1 - progress / 100)
-  const isPrimaryActionLocked = focusLock && status !== 'running'
   const lockButtonLabel = focusLock ? t('timer.disableLock') : t('timer.enableLock')
   // 집중 모드 실행 중(또는 일시정지 상태에서 메모가 있을 때)에 인라인 메모 표시
   const showMemoInput = mode === 'focus' && (status === 'running' || (status === 'paused' && pendingMemoText.length > 0))
@@ -206,10 +205,9 @@ export function TimerScreen() {
             focusLock ? styles.lockActive : ''
           }`}
           onClick={() => setFocusLock(!focusLock)}
-          aria-pressed={focusLock}
           aria-label={lockButtonLabel}
         >
-          {focusLock ? t('timer.unlock') : t('timer.lock')}
+          {focusLock ? '🔓' : '🔒'}
         </button>
       </div>
 
@@ -235,7 +233,12 @@ export function TimerScreen() {
       </div>
 
       {completionNotice && (
-        <div className={styles.completionOverlay} role="status" aria-live="polite">
+        <div
+          className={styles.completionOverlay}
+          role="status"
+          aria-live="polite"
+          onClick={() => setCompletionNotice(null)}
+        >
           <div className={styles.completionModal}>
             <div className={styles.completionTitle}>{completionNotice.title}</div>
             <div className={styles.completionBody}>{completionNotice.body}</div>
@@ -297,7 +300,6 @@ export function TimerScreen() {
               type="button"
               className={`${shared.btn} ${shared.btnPrimary}`}
               onClick={start}
-              disabled={isPrimaryActionLocked}
               aria-label={status === 'paused' ? t('timer.resume') : t('timer.start')}
             >
               {status === 'paused' ? t('timer.resumeText') : t('timer.startText')}

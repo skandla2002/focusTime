@@ -21,6 +21,7 @@ describe('timer screen', () => {
       showInterstitial: false,
       focusLock: false,
       user: null,
+      lastStatisticsAdAt: null,
     })
     useMemoStore.setState({
       memos: [],
@@ -40,7 +41,7 @@ describe('timer screen', () => {
     })
   })
 
-  it('[TimerScreen] should block extra controls while focus lock is enabled', async () => {
+  it('[TimerScreen] should block mode tab and allow start/resume while focus lock is enabled', async () => {
     const user = userEvent.setup()
 
     render(<TimerScreen />)
@@ -49,12 +50,21 @@ describe('timer screen', () => {
 
     expect(useAppStore.getState().focusLock).toBe(true)
 
+    // 모드 탭은 잠금으로 차단
     await user.click(screen.getByRole('button', { name: 'Break mode' }))
-    await user.click(screen.getByRole('button', { name: 'Resume timer' }))
-
     expect(useTimerStore.getState().mode).toBe('focus')
-    expect(useTimerStore.getState().status).toBe('paused')
 
+    // 시작/계속 버튼은 잠금 상태에서도 동작
+    await user.click(screen.getByRole('button', { name: 'Resume timer' }))
+    expect(useTimerStore.getState().status).toBe('running')
+  })
+
+  it('[TimerScreen] should reset timer while focus lock is enabled', async () => {
+    const user = userEvent.setup()
+
+    render(<TimerScreen />)
+
+    await user.click(screen.getByRole('button', { name: 'Enable focus lock' }))
     await user.click(screen.getByRole('button', { name: 'Reset timer' }))
 
     expect(useTimerStore.getState().status).toBe('idle')
@@ -72,6 +82,25 @@ describe('timer screen', () => {
 
     expect(useAppStore.getState().focusLock).toBe(false)
     expect(useTimerStore.getState().mode).toBe('break')
+  })
+
+  it('[TimerScreen] should dismiss completion overlay when clicked', async () => {
+    const user = userEvent.setup()
+
+    useTimerStore.setState({
+      lastCompletionAt: Date.now(),
+      lastCompletedMode: 'focus',
+      lastCompletedSession: null,
+    })
+
+    render(<TimerScreen />)
+
+    const overlay = await screen.findByRole('status')
+    expect(overlay).toBeTruthy()
+
+    await user.click(overlay)
+
+    expect(screen.queryByRole('status')).toBeNull()
   })
 
   it('[TimerScreen] should open the memo modal when a focus session completes without a memo', async () => {
