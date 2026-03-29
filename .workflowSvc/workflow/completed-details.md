@@ -6,6 +6,52 @@
 ---
 
 ## Archived Details
+
+### ISSUE-055: 집중 잠금 시 포커스 실드 레이어 추가 — 비필수 UI 어둡게, 타이머 중심 시선 유도
+
+> 출처: brief.md — 집중모드에 '잠금'을 하면 전체 화면을 어둡게 감싸 시선 방해를 줄이고 싶음. 더 좋은 방법이 있다면 함께 정리 요청
+
+- ⏱ 예상: AI 60분 / 시니어 30분 | 🤖 Subagent: 없음
+
+- 배경 및 방향:
+  - 현재 `focusLock`은 버튼 비활성화 중심이라 시각적으로는 일반 상태와 큰 차이가 없음
+  - 화면 전체를 완전히 가리는 검은 레이어는 타이머 확인과 제어까지 방해해 오히려 사용성이 떨어질 수 있음
+  - 권장 방향은 "전체 차단 모달"보다 `포커스 실드(focus shield)` 방식:
+    - 비필수 영역은 어둡게/부드럽게 가라앉힘
+    - 타이머 링, 남은 시간, 시작·일시정지·리셋·잠금 버튼은 위로 띄워 계속 읽고 누를 수 있게 유지
+    - `pointer-events: none` 기반 시각 레이어로 처리해 기존 잠금 제어 로직과 충돌하지 않게 구성
+
+- 구현 내용:
+
+  **`src/screens/TimerScreen.tsx` 수정**
+
+  - `focusLock && mode === 'focus'`일 때만 포커스 실드 레이어 렌더링
+  - 타이머 핵심 영역에 `focusPriority` 클래스를 부여해 overlay 위에 배치
+  - 필요하면 짧은 상태 문구(예: "집중 잠금 중")를 추가하되, 시선을 빼앗지 않는 수준으로 최소화
+
+  **`src/screens/TimerScreen.module.css` 수정**
+
+  - 화면 전체를 덮는 반투명 overlay + radial gradient / vignette 스타일 추가
+  - 핵심 UI는 높은 z-index와 약한 glow 또는 대비 강화로 강조
+  - `prefers-reduced-motion` 환경에서는 불필요한 애니메이션 제거
+
+- 수정 대상 파일:
+  - [ ] `src/screens/TimerScreen.tsx` — 포커스 실드 레이어 및 우선순위 DOM 연결
+  - [ ] `src/screens/TimerScreen.module.css` — overlay / spotlight / 강조 스타일
+  - [ ] `src/screens/TimerScreen.test.tsx` — 잠금 상태에서 overlay 노출 및 핵심 버튼 접근 가능 여부 테스트
+
+- 참고/제약사항:
+  - `completionOverlay`, 메모 모달, 인터스티셜보다 위아래 레이어 우선순위가 꼬이지 않도록 z-index 체계 점검 필요
+  - 배너 광고나 GNB까지 추가로 가리기보다, TimerScreen 내부의 비핵심 영역 디밍에 우선 집중
+  - "더 좋은 방법"에 대한 판단은 전체 암전보다 핵심 UI만 남기는 spotlight 방식이 UX상 더 적합한 것으로 계획
+
+- 테스트 필요: Yes — 잠금 ON + focus 모드에서 overlay 표시, 시작/계속 버튼과 잠금 버튼 접근 가능 여부 확인
+- 완료 기준:
+  - focusLock ON + focus 모드에서 비핵심 영역이 눈에 띄게 어두워짐
+  - 타이머 시간과 핵심 제어 버튼은 시인성과 조작 가능 상태 유지
+  - break 모드 또는 잠금 OFF 상태에서는 포커스 실드가 나타나지 않음
+
+- ✅ 완료 (2026-03-29 21:12): `TimerScreen`에 포커스 실드 레이어와 priority z-index를 추가하고, `TimerScreen.test.tsx`로 focus mode 전용 노출과 핵심 버튼 접근성을 검증함
 ### ISSUE-001: package.json 필수 스크립트 추가
 
 > 출처: 문서 점검 — AGENTS.md, CLAUDE.md, file-map.md, dod.md에서 참조하지만 실제로 없음

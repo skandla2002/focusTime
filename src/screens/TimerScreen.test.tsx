@@ -1,11 +1,11 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { FOCUS_DURATION } from '../types'
 import i18n from '../i18n'
 import { useAppStore } from '../store/appStore'
 import { useMemoStore } from '../store/memoStore'
 import { useTimerStore } from '../store/timerStore'
+import { FOCUS_DURATION } from '../types'
 import { TimerScreen } from './TimerScreen'
 
 vi.mock('../utils/analytics', () => ({
@@ -38,10 +38,14 @@ describe('timer screen', () => {
       lastCompletionAt: null,
       lastCompletedMode: null,
       lastCompletedSession: null,
+      savedModeState: {
+        focus: null,
+        break: null,
+      },
     })
   })
 
-  it('[TimerScreen] should block mode tab and allow start/resume while focus lock is enabled', async () => {
+  it('[TimerScreen] should show the focus shield and keep key controls interactive while focus lock is enabled', async () => {
     const user = userEvent.setup()
 
     render(<TimerScreen />)
@@ -49,14 +53,17 @@ describe('timer screen', () => {
     await user.click(screen.getByRole('button', { name: 'Enable focus lock' }))
 
     expect(useAppStore.getState().focusLock).toBe(true)
+    expect(screen.getByTestId('focus-shield')).toBeTruthy()
 
-    // 모드 탭은 잠금으로 차단
     await user.click(screen.getByRole('button', { name: 'Break mode' }))
     expect(useTimerStore.getState().mode).toBe('focus')
 
-    // 시작/계속 버튼은 잠금 상태에서도 동작
     await user.click(screen.getByRole('button', { name: 'Resume timer' }))
     expect(useTimerStore.getState().status).toBe('running')
+
+    await user.click(screen.getByRole('button', { name: 'Disable focus lock' }))
+    expect(useAppStore.getState().focusLock).toBe(false)
+    expect(screen.queryByTestId('focus-shield')).toBeNull()
   })
 
   it('[TimerScreen] should reset timer while focus lock is enabled', async () => {
@@ -82,6 +89,24 @@ describe('timer screen', () => {
 
     expect(useAppStore.getState().focusLock).toBe(false)
     expect(useTimerStore.getState().mode).toBe('break')
+  })
+
+  it('[TimerScreen] should not render the focus shield outside focus mode', async () => {
+    const user = userEvent.setup()
+
+    useTimerStore.setState({
+      mode: 'break',
+      status: 'paused',
+      timeLeft: 60,
+      sessionStart: null,
+    })
+
+    render(<TimerScreen />)
+
+    await user.click(screen.getByRole('button', { name: 'Enable focus lock' }))
+
+    expect(useAppStore.getState().focusLock).toBe(true)
+    expect(screen.queryByTestId('focus-shield')).toBeNull()
   })
 
   it('[TimerScreen] should dismiss completion overlay when clicked', async () => {

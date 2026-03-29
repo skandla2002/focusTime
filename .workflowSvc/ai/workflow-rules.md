@@ -188,6 +188,13 @@ brief.md 입력을 plan.md 이슈로 변환하여 **상세 조건·제약을 규
 | 📋 ISSUE 구현 | .workflowSvc/workflow/implementation.md → test-annotations.md |
 | 버그 발생 | .workflowSvc/docs/bugs/buglist.md → plan.md 이슈 추가 |
 | 이슈 완료 | .workflowSvc/workflow/3.review.md → commit → .workflowSvc/docs/ 업데이트 |
+
+### 7-1. review 문서 언어 규칙
+
+- `.workflowSvc/workflow/3.review.md`의 템플릿과 신규 기록은 기본적으로 한글로 작성한다.
+- 섹션명(`기록 형식`, `기록`), 본문 설명, 체크리스트 문구, `수정사항:` 라인은 한글 유지가 원칙이다.
+- 커밋 메시지 항목은 기존 규칙대로 `한글` / `English` 두 줄을 함께 기록한다.
+
 ## 8. Plan Archive Rules
 ### plan.md scope
 - 2.plan.md must stay lean and contain only not-yet-completed issues.

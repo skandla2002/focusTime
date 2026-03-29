@@ -25,3 +25,6 @@
 - 2.plan.md keeps only open issues.
 - Completed checklist items move to history.md.
 - Completed detailed specs move to .workflowSvc/workflow/completed-details.md.
+
+## Review Language
+- `.workflowSvc/workflow/3.review.md`는 계속 한글 형식으로 작성한다.
