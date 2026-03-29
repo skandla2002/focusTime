@@ -21,7 +21,7 @@ import { trackEvent } from './utils/analytics'
 import { subscribeAuthState } from './utils/cloudStorage'
 
 function AppContent() {
-  const { screen, navigate, setUser } = useAppStore()
+  const { screen, navigate, setUser, visualMode } = useAppStore()
   const { onBackground, onForeground } = useTimerStore()
   const { syncFromCloud } = useStudyStore()
 
@@ -55,7 +55,7 @@ function AppContent() {
   const isLoginScreen = screen === 'login'
 
   return (
-    <div className={styles.app}>
+    <div className={styles.app} data-visual-mode={visualMode}>
       {screen === 'login' && <LoginScreen />}
       {screen === 'home' && <HomeScreen />}
       {screen === 'timer' && <TimerScreen />}

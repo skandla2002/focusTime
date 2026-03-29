@@ -18,6 +18,26 @@
     },
     "border":       { "value": "#2a2a4a" }
   },
+  "grayscale": {
+    "comment": "[data-visual-mode='grayscale'] override tokens",
+    "bg": {
+      "primary":    { "value": "#111111", "comment": "앱 배경 (흑백)" },
+      "card":       { "value": "#1e1e1e", "comment": "카드 배경 (흑백)" },
+      "cardHover":  { "value": "#2a2a2a", "comment": "카드 호버 (흑백)" }
+    },
+    "primary":      { "value": "#888888", "comment": "주 색상 (흑백 neutral)" },
+    "primaryLight": { "value": "#aaaaaa" },
+    "secondary":    { "value": "#999999" },
+    "success":      { "value": "#7a7a7a" },
+    "warning":      { "value": "#c0c0c0" },
+    "danger":       { "value": "#b0b0b0" },
+    "text": {
+      "primary":    { "value": "#e8e8e8" },
+      "secondary":  { "value": "#a0a0a0" },
+      "muted":      { "value": "#646464" }
+    },
+    "border":       { "value": "#333333" }
+  },
   "size": {
     "navHeight":    { "value": "64px", "comment": "하단 탭바 높이" },
     "bannerHeight": { "value": "60px", "comment": "AdMob 배너 높이" }

@@ -17,6 +17,10 @@
     "en": "English",
     "zh": "中文"
   },
+  "displayMode": {
+    "toGrayscale": "Switch to grayscale",
+    "toColor": "Switch to color"
+  },
   "app": {
     "errorTitle": "App Error",
     "errorBody": "Something unexpected happened. Restart the app and try again."

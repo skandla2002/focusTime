@@ -1,3 +1,46 @@
+.timer-screen-shell {
+  position: relative;
+  isolation: isolate;
+}
+
+.focus-shield {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(8, 13, 22, 0.08) 0, rgba(8, 13, 22, 0.2) 18%, rgba(8, 13, 22, 0.64) 38%, rgba(8, 13, 22, 0.88) 100%),
+    linear-gradient(180deg, rgba(8, 13, 22, 0.28), rgba(8, 13, 22, 0.58));
+  backdrop-filter: blur(2px) saturate(0.85);
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.focus-priority {
+  position: relative;
+  z-index: 3;
+}
+
+.focus-priority-panel {
+  border-radius: 32px;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+  box-shadow: 0 24px 60px rgba(5, 10, 18, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.focus-diminished {
+  position: relative;
+  z-index: 0;
+  filter: saturate(0.82) brightness(0.92);
+  transition: filter 0.2s ease;
+}
+
 .mode-tabs {
   display: flex;
   background: var(--bg-card);
@@ -252,4 +295,15 @@
   font-size: 11px;
   color: var(--text-muted);
   text-align: right;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .focus-shield,
+  .focus-diminished,
+  .focus-priority-panel,
+  .timer-ring-progress,
+  .memo-inline {
+    animation: none;
+    transition: none;
+  }
 }

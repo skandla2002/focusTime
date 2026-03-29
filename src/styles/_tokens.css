@@ -20,3 +20,19 @@
   --size-banner-height: 60px; /* AdMob 배너 높이 */
   --typography-font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
 }
+
+[data-visual-mode='grayscale'] {
+  --grayscale-bg-primary: #111111; /* 앱 배경 (흑백) */
+  --grayscale-bg-card: #1e1e1e; /* 카드 배경 (흑백) */
+  --grayscale-bg-card-hover: #2a2a2a; /* 카드 호버 (흑백) */
+  --grayscale-primary: #888888; /* 주 색상 (흑백 neutral) */
+  --grayscale-primary-light: #aaaaaa;
+  --grayscale-secondary: #999999;
+  --grayscale-success: #7a7a7a;
+  --grayscale-warning: #c0c0c0;
+  --grayscale-danger: #b0b0b0;
+  --grayscale-text-primary: #e8e8e8;
+  --grayscale-text-secondary: #a0a0a0;
+  --grayscale-text-muted: #646464;
+  --grayscale-border: #333333;
+}

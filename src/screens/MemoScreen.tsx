@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import Fuse from 'fuse.js'
 import { useTranslation } from 'react-i18next'
+import { DisplayModeToggle } from '../components/DisplayModeToggle'
 import { useMemoStore } from '../store/memoStore'
 import { useStudyStore } from '../store/studyStore'
 import shared from '../styles/shared.module.css'
@@ -65,6 +66,7 @@ export function MemoScreen() {
           <div className={shared.headerTitle}>{t('memoScreen.title')}</div>
           <div className={shared.headerSubtitle}>{t('memoScreen.subtitle')}</div>
         </div>
+        <DisplayModeToggle />
       </div>
 
       <div className={`${shared.card} ${styles.searchCard}`}>

@@ -2,6 +2,18 @@ import { create } from 'zustand'
 import type { Screen, AppUser } from '../types'
 
 export type AppScreen = Screen | 'login'
+export type VisualMode = 'color' | 'grayscale'
+
+const VISUAL_MODE_KEY = 'focustimer_visual_mode'
+
+function loadVisualMode(): VisualMode {
+  try {
+    const stored = localStorage.getItem(VISUAL_MODE_KEY)
+    return stored === 'grayscale' ? 'grayscale' : 'color'
+  } catch {
+    return 'color'
+  }
+}
 
 interface AppState {
   screen: AppScreen
@@ -9,6 +21,7 @@ interface AppState {
   focusLock: boolean
   user: AppUser | null
   lastStatisticsAdAt: number | null
+  visualMode: VisualMode
   // actions
   navigate: (screen: AppScreen) => void
   triggerInterstitial: () => void
@@ -16,6 +29,7 @@ interface AppState {
   triggerStatisticsAd: () => void
   setFocusLock: (focusLock: boolean) => void
   setUser: (user: AppUser | null) => void
+  setVisualMode: (mode: VisualMode) => void
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -24,6 +38,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   focusLock: false,
   user: null,
   lastStatisticsAdAt: null,
+  visualMode: loadVisualMode(),
 
   navigate: (screen: AppScreen) => {
     set({ screen })
@@ -52,5 +67,14 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   setUser: (user: AppUser | null) => {
     set({ user })
+  },
+
+  setVisualMode: (mode: VisualMode) => {
+    try {
+      localStorage.setItem(VISUAL_MODE_KEY, mode)
+    } catch {
+      // ignore storage errors
+    }
+    set({ visualMode: mode })
   },
 }))

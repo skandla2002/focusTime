@@ -37,18 +37,26 @@ function flatten(obj, prefix = '') {
   return lines
 }
 
-const cssLines = flatten(tokens)
+// color 토큰 — :root
+const colorLines = flatten({ ...tokens, grayscale: undefined })
+// grayscale 토큰 — [data-visual-mode='grayscale']
+const grayscaleLines = tokens.grayscale ? flatten(tokens.grayscale, 'grayscale') : []
+
 const output = [
   '/* AUTO-GENERATED — do not edit manually */',
   '/* Source: src/tokens/design-tokens.json */',
   '/* Run: node scripts/generate-tokens.mjs */',
   '',
   ':root {',
-  ...cssLines,
+  ...colorLines,
+  '}',
+  '',
+  "[data-visual-mode='grayscale'] {",
+  ...grayscaleLines,
   '}',
   '',
 ].join('\n')
 
 const dest = resolve(root, 'src/styles/_tokens.css')
 writeFileSync(dest, output, 'utf-8')
-console.log(`✓ Tokens written to src/styles/_tokens.css (${cssLines.length} variables)`)
+console.log(`✓ Tokens written to src/styles/_tokens.css (${colorLines.length} color + ${grayscaleLines.length} grayscale variables)`)

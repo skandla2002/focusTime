@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { DisplayModeToggle } from '../components/DisplayModeToggle'
 import { useGoalStore } from '../store/goalStore'
 import { trackEvent } from '../utils/analytics'
 import { formatMinutes } from '../utils/time'
@@ -33,6 +34,7 @@ export function GoalScreen() {
     <div className={shared.screen}>
       <div className={shared.header}>
         <div className={shared.headerTitle}>{t('goal.title')}</div>
+        <DisplayModeToggle />
       </div>
 
       <div className={shared.card}>

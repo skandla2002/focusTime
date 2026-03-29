@@ -57,9 +57,40 @@
 - ISSUE-051: 집중 중 휴식 탭 전환 시 집중 시간 보존 — 탭 복귀 시 중단 지점부터 재개
 - ISSUE-052: 공유하기 — 스크린샷(이미지) 파일 공유 지원 추가
 - ISSUE-053: 통계 화면에 메모 통계 추가 — 빈출 단어, 시간대별 작업 분포
-- ISSUE-054: 메모 입력 자동완성 — 최근·자주 사용한 내용 추천
+- ISSUE-054: 메모 입력 자동완성 — 최근·자주 사용한 내용 추천
+
+- ISSUE-055: 집중 잠금 시 포커스 실드 레이어 추가 — 비필수 UI 어둡게, 타이머 중심 시선 유도
+- ISSUE-056: 시각 모드 토큰 인프라 추가 — color / grayscale 테마 토큰 + 상태 저장
+- ISSUE-057: 흑백 모드 UI 적용 — 상단 토글 추가 + 앱 전반 흑백 스타일 롤아웃
 
 ---
+### 2026-03-29 21:17 | ISSUE-056~057: 시각 모드(color/grayscale) 인프라 + UI 토글
+
+- ⏱ 예상: AI 210분 | ✅ 실제: 60분
+- 수정:
+  - `src/tokens/design-tokens.json` — grayscale 토큰 섹션 추가
+  - `scripts/generate-tokens.mjs` — `[data-visual-mode='grayscale']` override 블록 생성 로직
+  - `src/styles/_tokens.css` — 재생성 (16 color + 13 grayscale 변수)
+  - `src/styles/globals.css` — `[data-visual-mode='grayscale']` 실제 앱 CSS 변수 override 블록 추가
+  - `src/store/appStore.ts` — `VisualMode` 타입, `visualMode` 상태, `setVisualMode()`, localStorage 영속화
+  - `src/store/appStore.test.ts` — localStorage mock + visualMode 변경/저장 테스트 2건 추가
+  - `src/App.tsx` — `data-visual-mode={visualMode}` 루트 div 연결
+  - `src/components/DisplayModeToggle.tsx` — 신규: 시각 모드 토글 버튼 컴포넌트
+  - `src/components/DisplayModeToggle.module.css` — 신규: 토글 버튼 스타일
+  - `src/screens/HomeScreen.tsx`, `LoginScreen.tsx`, `TimerScreen.tsx`, `StatisticsScreen.tsx`, `GoalScreen.tsx`, `MemoScreen.tsx` — 헤더에 `<DisplayModeToggle />` 배치
+  - `src/locales/ko|en|zh/translation.json` — `displayMode.toGrayscale` / `displayMode.toColor` 키 추가
+- 요약: grayscale 테마 토큰을 design-tokens.json에 추가하고 토큰 생성기를 확장해 CSS override 블록을 자동 생성함. `appStore`에 `visualMode` 상태를 추가하고 localStorage에 영속화. App 루트에 `data-visual-mode` 연결 후 각 화면 헤더에 `DisplayModeToggle` 아이콘 버튼을 배치해 color/grayscale 전환 가능하게 함
+
+---
+
+### 2026-03-29 21:12 | ISSUE-055: 집중 잠금 시 포커스 실드 레이어 추가
+
+- ⏱ 예상: AI 60분 / 시니어 30분 | 🤖 Subagent: 없음 | ✅ 실제: 35분
+- 수정: `src/screens/TimerScreen.tsx`, `src/screens/TimerScreen.module.css`, `src/screens/TimerScreen.test.tsx`
+- 요약: `focusLock && mode === 'focus'`에서만 노출되는 focus shield를 TimerScreen 내부에 추가하고, 헤더와 타이머 핵심 제어를 overlay 위로 올려 잠금 중에도 읽기와 조작이 가능한 상태를 유지함
+
+---
+
 ### 2026-03-29 17:30 | ISSUE-052: 공유하기 — 스크린샷(이미지) 파일 공유 지원 추가
 
 - ⏱ 예상: AI 90분 / 시니어 2시간 | 🤖 Subagent: Explore (공유 버튼 현재 구현 위치 파악) | ✅ 실제: 25분

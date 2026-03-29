@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { DisplayModeToggle } from '../components/DisplayModeToggle'
 import { LanguageSwitcher } from '../components/LanguageSwitcher'
 import { useAppStore } from '../store/appStore'
 import { signInWithGoogle } from '../utils/cloudStorage'
@@ -34,7 +35,10 @@ export function LoginScreen() {
         <div className={styles.loginIcon}>⏱</div>
         <h1 className={styles.loginTitle}>{t('common.appName')}</h1>
         <p className={styles.loginSubtitle}>{t('login.subtitle')}</p>
-        <LanguageSwitcher />
+        <div className={styles.loginLangRow}>
+          <LanguageSwitcher />
+          <DisplayModeToggle />
+        </div>
       </div>
 
       <div className={styles.loginActions}>

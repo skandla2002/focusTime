@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import type { FocusSession } from '../types'
-import { BREAK_DURATION, FOCUS_DURATION } from '../types'
-import { MemoDropdown } from '../components/MemoDropdown'
+import { DisplayModeToggle } from '../components/DisplayModeToggle'
 import { MemoInputModal } from '../components/MemoInputModal'
 import shared from '../styles/shared.module.css'
 import { useAppStore } from '../store/appStore'
 import { useMemoStore } from '../store/memoStore'
 import { useStudyStore } from '../store/studyStore'
 import { useTimerStore } from '../store/timerStore'
+import type { FocusSession } from '../types'
+import { BREAK_DURATION, FOCUS_DURATION } from '../types'
 import { playCompletionAlert } from '../utils/completionAlert'
-import { formatTime, formatMinutes } from '../utils/time'
+import { formatMinutes, formatTime } from '../utils/time'
 import styles from './TimerScreen.module.css'
 
 interface CompletionNotice {
@@ -45,8 +45,7 @@ export function TimerScreen() {
   const [completionNotice, setCompletionNotice] = useState<CompletionNotice | null>(null)
   const [pendingMemoSession, setPendingMemoSession] = useState<FocusSession | null>(null)
   const [pendingMemoText, setPendingMemoText] = useState('')
-  const [showMemoDropdown, setShowMemoDropdown] = useState(false)
-  // effect dep array 없이 최신값 읽기 위한 ref
+  const [, setShowMemoDropdown] = useState(false)
   const pendingMemoTextRef = useRef('')
   pendingMemoTextRef.current = pendingMemoText
 
@@ -111,14 +110,11 @@ export function TimerScreen() {
     setPendingMemoText('')
 
     if (inlineMemo) {
-      // 인라인 메모 있음 → 자동 저장, 모달 표시 안 함
       void saveMemo(lastCompletedSession.id, lastCompletedSession.date, inlineMemo)
       triggerInterstitial()
     } else if (getMemoBySessionId(lastCompletedSession.id)) {
-      // 이미 메모 있음 → 모달 불필요
       triggerInterstitial()
     } else {
-      // 인라인 메모 없음 → 기존 모달 fallback
       setPendingMemoSession(lastCompletedSession)
     }
   }, [addSession, getMemoBySessionId, lastCompletedSession, loaded, saveMemo, triggerInterstitial])
@@ -191,178 +187,196 @@ export function TimerScreen() {
   const circumference = 2 * Math.PI * 110
   const dashOffset = circumference * (1 - progress / 100)
   const lockButtonLabel = focusLock ? t('timer.disableLock') : t('timer.enableLock')
-  // 집중 모드 실행 중(또는 일시정지 상태에서 메모가 있을 때)에 인라인 메모 표시
-  const showMemoInput = mode === 'focus' && (status === 'running' || (status === 'paused' && pendingMemoText.length > 0))
+  const showFocusShield = focusLock && mode === 'focus'
+  const showMemoInput =
+    mode === 'focus' && (status === 'running' || (status === 'paused' && pendingMemoText.length > 0))
 
   return (
     <div className={shared.screen}>
-      <div className={shared.header}>
-        <div>
-          <div className={shared.headerTitle}>{t('timer.title')}</div>
-          <div className={shared.headerSubtitle}>
-            {focusLock ? t('timer.subtitleLocked') : t('timer.subtitleReady')}
-          </div>
-        </div>
-        <button
-          type="button"
-          className={`${shared.btn} ${shared.btnSecondary} ${styles.lockToggle} ${
-            focusLock ? styles.lockActive : ''
-          }`}
-          onClick={() => setFocusLock(!focusLock)}
-          aria-label={lockButtonLabel}
-        >
-          {focusLock ? '🔓' : '🔒'}
-        </button>
-      </div>
+      <div className={styles.timerScreenShell}>
+        {showFocusShield && (
+          <div className={styles.focusShield} aria-hidden="true" data-testid="focus-shield" />
+        )}
 
-      <div className={styles.modeTabs}>
-        <button
-          type="button"
-          className={`${styles.modeTab} ${mode === 'focus' ? styles.active : ''}`}
-          onClick={() => handleSwitchMode('focus')}
-          disabled={focusLock}
-          aria-label={t('timer.focusMode')}
-        >
-          {t('timer.focusLabel')}
-        </button>
-        <button
-          type="button"
-          className={`${styles.modeTab} ${mode === 'break' ? styles.active : ''}`}
-          onClick={() => handleSwitchMode('break')}
-          disabled={focusLock}
-          aria-label={t('timer.breakMode')}
-        >
-          {t('timer.breakLabel')}
-        </button>
-      </div>
-
-      {completionNotice && (
-        <div
-          className={styles.completionOverlay}
-          role="status"
-          aria-live="polite"
-          onClick={() => setCompletionNotice(null)}
-        >
-          <div className={styles.completionModal}>
-            <div className={styles.completionTitle}>{completionNotice.title}</div>
-            <div className={styles.completionBody}>{completionNotice.body}</div>
-          </div>
-        </div>
-      )}
-
-      {pendingMemoSession && (
-        <MemoInputModal
-          sessionId={pendingMemoSession.id}
-          date={pendingMemoSession.date}
-          onSave={handleSaveMemo}
-          onSkip={handleSkipMemo}
-        />
-      )}
-
-      <div className={styles.timerDisplay}>
-        <div className={styles.timerRingContainer}>
-          <svg className={styles.timerRingSvg} width="240" height="240" viewBox="0 0 240 240">
-            <circle className={styles.timerRingBg} cx="120" cy="120" r="110" />
-            <circle
-              className={`${styles.timerRingProgress} ${mode === 'break' ? styles.break : ''}`}
-              cx="120"
-              cy="120"
-              r="110"
-              strokeDasharray={circumference}
-              strokeDashoffset={dashOffset}
-            />
-          </svg>
-          <div className={styles.timerTimeText}>
-            <div className={styles.timerTime}>{formatTime(timeLeft)}</div>
-            <div className={styles.timerModeLabel}>
-              {status === 'running' && <span className={`${shared.runningIndicator} ${styles.runningDot}`} />}
-              {mode === 'focus' ? t('timer.focusTime') : t('timer.breakTime')}
+        <div className={`${shared.header} ${showFocusShield ? styles.focusPriority : ''}`}>
+          <div>
+            <div className={shared.headerTitle}>{t('timer.title')}</div>
+            <div className={shared.headerSubtitle}>
+              {focusLock ? t('timer.subtitleLocked') : t('timer.subtitleReady')}
             </div>
           </div>
-        </div>
-
-        <div className={styles.timerControls}>
-          <button
-            type="button"
-            className={`${shared.btn} ${shared.btnIcon}`}
-            onClick={handleReset}
-            aria-label={t('timer.reset')}
-          >
-            {t('timer.resetShort')}
-          </button>
-          {status === 'running' ? (
+          <div className={styles.headerActions}>
+            <DisplayModeToggle />
             <button
               type="button"
-              className={`${shared.btn} ${shared.btnPrimary}`}
-              onClick={pause}
-              aria-label={t('timer.pause')}
+              className={`${shared.btn} ${shared.btnSecondary} ${styles.lockToggle} ${
+                focusLock ? styles.lockActive : ''
+              }`}
+              onClick={() => setFocusLock(!focusLock)}
+              aria-label={lockButtonLabel}
             >
-              {t('timer.pauseText')}
+              {focusLock ? '🔒' : '🔓'}
             </button>
-          ) : (
-            <button
-              type="button"
-              className={`${shared.btn} ${shared.btnPrimary}`}
-              onClick={start}
-              aria-label={status === 'paused' ? t('timer.resume') : t('timer.start')}
-            >
-              {status === 'paused' ? t('timer.resumeText') : t('timer.startText')}
-            </button>
-          )}
-          <button
-            type="button"
-            className={`${shared.btn} ${shared.btnIcon} ${styles.btnDisabled}`}
-            aria-label={t('timer.settings')}
-            disabled
-          >
-            {t('timer.settingsShort')}
-          </button>
-        </div>
-      </div>
-
-      {showMemoInput && (
-        <div className={`${shared.card} ${styles.memoInline}`}>
-          <div className={styles.memoLabel}>{t('timer.memoLabel')}</div>
-          <textarea
-            className={styles.memoTextarea}
-            value={pendingMemoText}
-            onChange={(e) => setPendingMemoText(e.target.value)}
-            placeholder={t('timer.memoPlaceholder')}
-            aria-label={t('timer.memoLabel')}
-            maxLength={500}
-            rows={2}
-          />
-          <div className={styles.memoHint}>{t('timer.memoHint')}</div>
-        </div>
-      )}
-
-      <div className={shared.card}>
-        <div className={shared.cardTitle}>{t('timer.todayFocus')}</div>
-        <div className={styles.todaySummary}>
-          <div>
-            <div className={`${styles.summaryNumber} ${styles.summaryNumberPrimary}`}>{completedToday}</div>
-            <div className={styles.summaryLabel}>{t('timer.completedSessions')}</div>
           </div>
-          <div>
-            <div className={`${styles.summaryNumber} ${styles.summaryNumberSecondary}`}>
-              {completedToday * 25}
+        </div>
+
+        <div className={`${styles.modeTabs} ${showFocusShield ? styles.focusDiminished : ''}`}>
+          <button
+            type="button"
+            className={`${styles.modeTab} ${mode === 'focus' ? styles.active : ''}`}
+            onClick={() => handleSwitchMode('focus')}
+            disabled={focusLock}
+            aria-label={t('timer.focusMode')}
+          >
+            {t('timer.focusLabel')}
+          </button>
+          <button
+            type="button"
+            className={`${styles.modeTab} ${mode === 'break' ? styles.active : ''}`}
+            onClick={() => handleSwitchMode('break')}
+            disabled={focusLock}
+            aria-label={t('timer.breakMode')}
+          >
+            {t('timer.breakLabel')}
+          </button>
+        </div>
+
+        {completionNotice && (
+          <div
+            className={styles.completionOverlay}
+            role="status"
+            aria-live="polite"
+            onClick={() => setCompletionNotice(null)}
+          >
+            <div className={styles.completionModal}>
+              <div className={styles.completionTitle}>{completionNotice.title}</div>
+              <div className={styles.completionBody}>{completionNotice.body}</div>
             </div>
-            <div className={styles.summaryLabel}>{t('timer.focusMinutes')}</div>
-          </div>
-          <div>
-            <div className={`${styles.summaryNumber} ${styles.summaryNumberSuccess}`}>{completedToday * 5}</div>
-            <div className={styles.summaryLabel}>{t('timer.breakMinutes')}</div>
-          </div>
-        </div>
-
-        {completedToday > 0 && (
-          <div className={`${shared.pomodoroDots} ${styles.dotsRow}`}>
-            {Array.from({ length: Math.min(completedToday, 8) }).map((_, index) => (
-              <div key={index} className={`${shared.pomodoroDot} ${shared.completed}`} />
-            ))}
-            {completedToday < 8 && <div className={shared.pomodoroDot} />}
           </div>
         )}
+
+        {pendingMemoSession && (
+          <MemoInputModal
+            sessionId={pendingMemoSession.id}
+            date={pendingMemoSession.date}
+            onSave={handleSaveMemo}
+            onSkip={handleSkipMemo}
+          />
+        )}
+
+        <div
+          className={`${styles.timerDisplay} ${showFocusShield ? `${styles.focusPriority} ${styles.focusPriorityPanel}` : ''}`}
+        >
+          <div className={styles.timerRingContainer}>
+            <svg className={styles.timerRingSvg} width="240" height="240" viewBox="0 0 240 240">
+              <circle className={styles.timerRingBg} cx="120" cy="120" r="110" />
+              <circle
+                className={`${styles.timerRingProgress} ${mode === 'break' ? styles.break : ''}`}
+                cx="120"
+                cy="120"
+                r="110"
+                strokeDasharray={circumference}
+                strokeDashoffset={dashOffset}
+              />
+            </svg>
+            <div className={styles.timerTimeText}>
+              <div className={styles.timerTime}>{formatTime(timeLeft)}</div>
+              <div className={styles.timerModeLabel}>
+                {status === 'running' && (
+                  <span className={`${shared.runningIndicator} ${styles.runningDot}`} />
+                )}
+                {mode === 'focus' ? t('timer.focusTime') : t('timer.breakTime')}
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.timerControls}>
+            <button
+              type="button"
+              className={`${shared.btn} ${shared.btnIcon}`}
+              onClick={handleReset}
+              aria-label={t('timer.reset')}
+            >
+              {t('timer.resetShort')}
+            </button>
+            {status === 'running' ? (
+              <button
+                type="button"
+                className={`${shared.btn} ${shared.btnPrimary}`}
+                onClick={pause}
+                aria-label={t('timer.pause')}
+              >
+                {t('timer.pauseText')}
+              </button>
+            ) : (
+              <button
+                type="button"
+                className={`${shared.btn} ${shared.btnPrimary}`}
+                onClick={start}
+                aria-label={status === 'paused' ? t('timer.resume') : t('timer.start')}
+              >
+                {status === 'paused' ? t('timer.resumeText') : t('timer.startText')}
+              </button>
+            )}
+            <button
+              type="button"
+              className={`${shared.btn} ${shared.btnIcon} ${styles.btnDisabled}`}
+              aria-label={t('timer.settings')}
+              disabled
+            >
+              {t('timer.settingsShort')}
+            </button>
+          </div>
+        </div>
+
+        {showMemoInput && (
+          <div className={`${shared.card} ${styles.memoInline} ${showFocusShield ? styles.focusDiminished : ''}`}>
+            <div className={styles.memoLabel}>{t('timer.memoLabel')}</div>
+            <textarea
+              className={styles.memoTextarea}
+              value={pendingMemoText}
+              onChange={(e) => setPendingMemoText(e.target.value)}
+              placeholder={t('timer.memoPlaceholder')}
+              aria-label={t('timer.memoLabel')}
+              maxLength={500}
+              rows={2}
+            />
+            <div className={styles.memoHint}>{t('timer.memoHint')}</div>
+          </div>
+        )}
+
+        <div className={`${shared.card} ${showFocusShield ? styles.focusDiminished : ''}`}>
+          <div className={shared.cardTitle}>{t('timer.todayFocus')}</div>
+          <div className={styles.todaySummary}>
+            <div>
+              <div className={`${styles.summaryNumber} ${styles.summaryNumberPrimary}`}>
+                {completedToday}
+              </div>
+              <div className={styles.summaryLabel}>{t('timer.completedSessions')}</div>
+            </div>
+            <div>
+              <div className={`${styles.summaryNumber} ${styles.summaryNumberSecondary}`}>
+                {completedToday * 25}
+              </div>
+              <div className={styles.summaryLabel}>{t('timer.focusMinutes')}</div>
+            </div>
+            <div>
+              <div className={`${styles.summaryNumber} ${styles.summaryNumberSuccess}`}>
+                {completedToday * 5}
+              </div>
+              <div className={styles.summaryLabel}>{t('timer.breakMinutes')}</div>
+            </div>
+          </div>
+
+          {completedToday > 0 && (
+            <div className={`${shared.pomodoroDots} ${styles.dotsRow}`}>
+              {Array.from({ length: Math.min(completedToday, 8) }).map((_, index) => (
+                <div key={index} className={`${shared.pomodoroDot} ${shared.completed}`} />
+              ))}
+              {completedToday < 8 && <div className={shared.pomodoroDot} />}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

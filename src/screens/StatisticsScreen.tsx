@@ -17,6 +17,7 @@ import { Bar, Line } from 'react-chartjs-2'
 import { useAppStore } from '../store/appStore'
 import { useMemoStore } from '../store/memoStore'
 import { useStudyStore } from '../store/studyStore'
+import { DisplayModeToggle } from '../components/DisplayModeToggle'
 import { trackEvent } from '../utils/analytics'
 import { getTopWords, getHourlyDistribution } from '../utils/memoStats'
 import { shareScreenshot } from '../utils/share'
@@ -183,6 +184,7 @@ export function StatisticsScreen() {
     <div className={shared.screen} ref={shareTargetRef}>
       <div className={shared.header}>
         <div className={shared.headerTitle}>{t('statistics.title')}</div>
+        <DisplayModeToggle />
       </div>
 
       <div className={styles.statsGrid}>

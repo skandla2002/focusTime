@@ -17,6 +17,10 @@
     "en": "English",
     "zh": "中文"
   },
+  "displayMode": {
+    "toGrayscale": "흑백 모드로 전환",
+    "toColor": "컬러 모드로 전환"
+  },
   "app": {
     "errorTitle": "앱 오류",
     "errorBody": "예상하지 못한 문제가 발생했습니다. 앱을 다시 시작해 주세요."

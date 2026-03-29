@@ -17,6 +17,10 @@
     "en": "English",
     "zh": "中文"
   },
+  "displayMode": {
+    "toGrayscale": "切换到灰度模式",
+    "toColor": "切换到彩色模式"
+  },
   "app": {
     "errorTitle": "应用错误",
     "errorBody": "发生了意外问题。请重新启动应用后再试。"

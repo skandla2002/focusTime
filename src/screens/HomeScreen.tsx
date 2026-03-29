@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BannerAd } from '../components/BannerAd'
+import { DisplayModeToggle } from '../components/DisplayModeToggle'
 import { LanguageSwitcher } from '../components/LanguageSwitcher'
 import { useAppStore } from '../store/appStore'
 import { useGoalStore } from '../store/goalStore'
@@ -69,6 +70,7 @@ export function HomeScreen() {
             </div>
           )}
           <LanguageSwitcher />
+          <DisplayModeToggle />
         </div>
       </div>
 

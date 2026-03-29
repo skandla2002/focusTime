@@ -26,6 +26,23 @@
   --font: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
+/* ── Grayscale visual mode override ── */
+[data-visual-mode='grayscale'] {
+  --bg-primary:         #111111;
+  --bg-card:            #1e1e1e;
+  --bg-card-hover:      #2a2a2a;
+  --color-primary:      #888888;
+  --color-primary-light:#aaaaaa;
+  --color-secondary:    #999999;
+  --color-success:      #7a7a7a;
+  --color-warning:      #c0c0c0;
+  --color-danger:       #b0b0b0;
+  --text-primary:       #e8e8e8;
+  --text-secondary:     #a0a0a0;
+  --text-muted:         #646464;
+  --border:             #333333;
+}
+
 html, body {
   height: 100%;
   background: var(--bg-primary);
