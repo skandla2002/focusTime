@@ -19,7 +19,7 @@ import { useMemoStore } from '../store/memoStore'
 import { useStudyStore } from '../store/studyStore'
 import { trackEvent } from '../utils/analytics'
 import { getTopWords, getHourlyDistribution } from '../utils/memoStats'
-import { shareStudyResult } from '../utils/share'
+import { shareScreenshot } from '../utils/share'
 import { formatDate, formatMinutes, getDayLabel } from '../utils/time'
 import shared from '../styles/shared.module.css'
 import styles from './StatisticsScreen.module.css'
@@ -42,6 +42,7 @@ export function StatisticsScreen() {
   const { triggerInterstitial } = useAppStore()
   const { memos, loadAll, loaded } = useMemoStore()
   const triggeredRef = useRef(false)
+  const shareTargetRef = useRef<HTMLDivElement | null>(null)
   const [shareFeedback, setShareFeedback] = useState<string | null>(null)
 
   useEffect(() => {
@@ -147,16 +148,23 @@ export function StatisticsScreen() {
   }
 
   async function handleShare() {
+    const shareTarget = shareTargetRef.current
     const shareText = t('statistics.shareText', {
       minutes: todayMinutes,
       sessions: todaySessions,
     })
 
+    if (!shareTarget) {
+      setShareFeedback(t('statistics.shareUnavailable'))
+      return
+    }
+
     try {
-      const result = await shareStudyResult({
+      const result = await shareScreenshot({
+        elementRef: shareTarget,
+        filename: `focustimer-${todayKey}.png`,
         title: t('statistics.shareTitle'),
         text: shareText,
-        url: window.location.href,
       })
 
       await trackEvent('share_result', {
@@ -172,7 +180,7 @@ export function StatisticsScreen() {
   }
 
   return (
-    <div className={shared.screen}>
+    <div className={shared.screen} ref={shareTargetRef}>
       <div className={shared.header}>
         <div className={shared.headerTitle}>{t('statistics.title')}</div>
       </div>
