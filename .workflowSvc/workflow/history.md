@@ -19,6 +19,46 @@
 
 <!-- 완료된 이슈를 아래에 추가 (최신순) -->
 
+### 2026-03-29 16:28 | ISSUE-050: 잠금 상태에서 '시작'/'계속' 버튼 활성화
+
+- ⏱ 예상: AI 10분 / 시니어 5분 | 🤖 Subagent: 없음 | ✅ 실제: 5분
+- 수정: `src/screens/TimerScreen.tsx`
+- 요약: `isPrimaryActionLocked` 변수 제거 — 잠금 ON 상태에서도 시작/계속 버튼 동작, 모드 탭·GNB는 여전히 차단
+
+---
+
+### 2026-03-29 16:28 | ISSUE-049: 타이머 잠금 버튼 — 텍스트 → 열쇠 아이콘(🔒/🔓)으로 교체
+
+- ⏱ 예상: AI 10분 / 시니어 5분 | 🤖 Subagent: 없음 | ✅ 실제: 5분
+- 수정: `src/screens/TimerScreen.tsx`, `src/screens/TimerScreen.module.css`
+- 요약: 잠금 버튼 텍스트 → 🔒/🔓 이모지, min-width 92px → 44px 축소
+
+---
+
+### 2026-03-29 16:28 | ISSUE-048: 하단 배너 광고 레이아웃 수정
+
+- ⏱ 예상: AI 10분 / 시니어 5분 | 🤖 Subagent: 없음 | ✅ 실제: 5분
+- 수정: `src/components/BannerAd.module.css`
+- 요약: `bottom: var(--nav-height)` → `bottom: 0` — 배너 최하단 고정, GNB가 배너 위에 표시
+
+---
+
+### 2026-03-29 16:28 | ISSUE-047: 통계 탭 전면 광고 1시간 쿨다운
+
+- ⏱ 예상: AI 30분 / 시니어 15분 | 🤖 Subagent: 없음 | ✅ 실제: 20분
+- 수정: `src/store/appStore.ts`, `src/components/Navigation.tsx`, `src/store/appStore.test.ts`
+- 요약: `triggerStatisticsAd()` 1시간 쿨다운 로직, statistics 탭 클릭 시 호출
+
+---
+
+### 2026-03-29 16:28 | ISSUE-046: 집중 종료 알림 오버레이 — 클릭 시 닫기
+
+- ⏱ 예상: AI 10분 / 시니어 5분 | 🤖 Subagent: 없음 | ✅ 실제: 10분
+- 수정: `src/screens/TimerScreen.tsx`, `src/screens/TimerScreen.test.tsx`
+- 요약: completionOverlay에 onClick 추가 — 클릭 시 즉시 닫혀 화면 조작 가능
+
+---
+
 ### 2026-03-15 --:-- | ISSUE-045: 집중 타이머 실행 중 메모 사전 입력
 
 - ⏱ 예상: 기록없음(규칙 도입 전) | 🤖 Subagent: 없음 | ✅ 실제: 기록없음
