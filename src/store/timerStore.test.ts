@@ -175,10 +175,10 @@ describe('timer store', () => {
 
     expect(session).toBeNull()
     expect(useTimerStore.getState().mode).toBe('focus')
-    expect(useTimerStore.getState().status).toBe('running')
+    expect(useTimerStore.getState().status).toBe('idle')
     expect(useTimerStore.getState().timeLeft).toBe(25 * 60)
     expect(useTimerStore.getState().completedToday).toBe(3)
-    expect(useTimerStore.getState().sessionStart).toBe(Date.now())
+    expect(useTimerStore.getState().sessionStart).toBeNull()
     expect(useTimerStore.getState().savedModeState.focus).toBeNull()
   })
 
@@ -235,6 +235,32 @@ describe('timer store', () => {
     expect(useTimerStore.getState().completedToday).toBe(1)
     expect(useTimerStore.getState().sessionStart).toBe(Date.now())
     expect(useTimerStore.getState().savedModeState.break).toBeNull()
+  })
+
+  it('[timerStore] should wait in idle focus mode when foreground resume finishes a break', () => {
+    useTimerStore.setState({
+      mode: 'break',
+      status: 'running',
+      timeLeft: 10,
+      backgroundedAt: Date.now() - 20 * 1000,
+      completedToday: 2,
+      savedModeState: {
+        focus: {
+          timeLeft: 99,
+          sessionStart: Date.now() - 10_000,
+        },
+        break: null,
+      },
+    })
+
+    useTimerStore.getState().onForeground()
+
+    expect(useTimerStore.getState().mode).toBe('focus')
+    expect(useTimerStore.getState().status).toBe('idle')
+    expect(useTimerStore.getState().timeLeft).toBe(25 * 60)
+    expect(useTimerStore.getState().completedToday).toBe(2)
+    expect(useTimerStore.getState().sessionStart).toBeNull()
+    expect(useTimerStore.getState().savedModeState.focus).toBeNull()
   })
 
   it('[timerStore] should clear only the current mode saved state when reset is called', () => {

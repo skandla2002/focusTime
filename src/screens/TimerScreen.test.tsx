@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import i18n from '../i18n'
 import { useAppStore } from '../store/appStore'
 import { useMemoStore } from '../store/memoStore'
+import { useStudyStore } from '../store/studyStore'
 import { useTimerStore } from '../store/timerStore'
 import { FOCUS_DURATION } from '../types'
 import { TimerScreen } from './TimerScreen'
@@ -16,6 +17,7 @@ describe('timer screen', () => {
   beforeEach(async () => {
     await i18n.changeLanguage('en')
     localStorage.clear()
+    const today = new Date().toISOString().split('T')[0]
     useAppStore.setState({
       screen: 'timer',
       showInterstitial: false,
@@ -27,6 +29,17 @@ describe('timer screen', () => {
       memos: [],
       loaded: true,
       loadAll: vi.fn().mockResolvedValue(undefined),
+    })
+    useStudyStore.setState({
+      records: [
+        {
+          id: 'record_1',
+          date: today,
+          sessions: [{ id: 'session_1', startTime: Date.now() - 3_600_000, endTime: Date.now(), duration: 45, date: today }],
+          totalMinutes: 45,
+        },
+      ],
+      syncing: false,
     })
     useTimerStore.setState({
       mode: 'focus',
@@ -145,5 +158,12 @@ describe('timer screen', () => {
 
     expect(await screen.findByText('What did you work on?')).toBeTruthy()
     expect(screen.getByRole('button', { name: 'Save memo' })).toBeTruthy()
+  })
+
+  it('[TimerScreen] should show today focused time beneath the timer controls', () => {
+    render(<TimerScreen />)
+
+    expect(screen.getByText("Today's focused time")).toBeTruthy()
+    expect(screen.getByText('45분')).toBeTruthy()
   })
 })

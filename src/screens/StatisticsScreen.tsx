@@ -20,7 +20,14 @@ import { useStudyStore } from '../store/studyStore'
 import { DisplayModeToggle } from '../components/DisplayModeToggle'
 import { trackEvent } from '../utils/analytics'
 import { getTopWords, getHourlyDistribution } from '../utils/memoStats'
-import { shareScreenshot } from '../utils/share'
+import {
+  generateMarkdownReport,
+  generateShareUrl,
+  generateTextReport,
+  shareScreenshot,
+  shareStudyResult,
+} from '../utils/share'
+import type { StudyStats } from '../utils/share'
 import { formatDate, formatMinutes, getDayLabel } from '../utils/time'
 import shared from '../styles/shared.module.css'
 import styles from './StatisticsScreen.module.css'
@@ -40,19 +47,20 @@ ChartJS.register(
 export function StatisticsScreen() {
   const { t } = useTranslation()
   const { records, getWeekData, getMonthData, getTodayMinutes, getTotalMinutes } = useStudyStore()
-  const { triggerInterstitial } = useAppStore()
+  const { triggerStatisticsAd } = useAppStore()
   const { memos, loadAll, loaded } = useMemoStore()
   const triggeredRef = useRef(false)
   const shareTargetRef = useRef<HTMLDivElement | null>(null)
   const [shareFeedback, setShareFeedback] = useState<string | null>(null)
+  const [showShareOptions, setShowShareOptions] = useState(false)
 
   useEffect(() => {
     if (!triggeredRef.current) {
       triggeredRef.current = true
-      const timer = setTimeout(() => triggerInterstitial(), 500)
+      const timer = setTimeout(() => triggerStatisticsAd(), 500)
       return () => clearTimeout(timer)
     }
-  }, [triggerInterstitial])
+  }, [triggerStatisticsAd])
 
   useEffect(() => {
     if (!shareFeedback) {
@@ -148,15 +156,75 @@ export function StatisticsScreen() {
     ],
   }
 
-  async function handleShare() {
+  const stats: StudyStats = {
+    date: todayKey,
+    todayMinutes,
+    weekTotal,
+    monthTotal,
+    totalMinutes,
+    todaySessions,
+  }
+
+  function showFeedback(msg: string) {
+    setShareFeedback(msg)
+    setShowShareOptions(false)
+  }
+
+  async function handleCopyText() {
+    try {
+      const text = generateTextReport(stats)
+      await navigator.clipboard.writeText(text)
+      await trackEvent('share_result', { method: 'text', today_minutes: todayMinutes })
+      showFeedback(t('statistics.shareTextCopied'))
+    } catch {
+      showFeedback(t('statistics.shareUnavailable'))
+    }
+  }
+
+  async function handleCopyMarkdown() {
+    try {
+      const md = generateMarkdownReport(stats)
+      await navigator.clipboard.writeText(md)
+      await trackEvent('share_result', { method: 'markdown', today_minutes: todayMinutes })
+      showFeedback(t('statistics.shareMarkdownCopied'))
+    } catch {
+      showFeedback(t('statistics.shareUnavailable'))
+    }
+  }
+
+  async function handleCopyLink() {
+    try {
+      const url = generateShareUrl(stats)
+      await navigator.clipboard.writeText(url)
+      await trackEvent('share_result', { method: 'link', today_minutes: todayMinutes })
+      showFeedback(t('statistics.shareLinkCopied'))
+    } catch {
+      showFeedback(t('statistics.shareUnavailable'))
+    }
+  }
+
+  async function handleShareToApp() {
+    const shareText = t('statistics.shareText', { minutes: todayMinutes, sessions: todaySessions })
+    const url = generateShareUrl(stats)
+    try {
+      const result = await shareStudyResult({
+        title: t('statistics.shareTitle'),
+        text: shareText,
+        url,
+      })
+      await trackEvent('share_result', { method: 'app', today_minutes: todayMinutes })
+      showFeedback(result === 'shared' ? t('statistics.shareOpened') : t('statistics.shareCopied'))
+    } catch {
+      showFeedback(t('statistics.shareUnavailable'))
+    }
+  }
+
+  async function handleShareScreenshot() {
     const shareTarget = shareTargetRef.current
-    const shareText = t('statistics.shareText', {
-      minutes: todayMinutes,
-      sessions: todaySessions,
-    })
+    const shareText = t('statistics.shareText', { minutes: todayMinutes, sessions: todaySessions })
 
     if (!shareTarget) {
-      setShareFeedback(t('statistics.shareUnavailable'))
+      showFeedback(t('statistics.shareUnavailable'))
       return
     }
 
@@ -167,16 +235,10 @@ export function StatisticsScreen() {
         title: t('statistics.shareTitle'),
         text: shareText,
       })
-
-      await trackEvent('share_result', {
-        method: result,
-        today_minutes: todayMinutes,
-        today_sessions: todaySessions,
-      })
-
-      setShareFeedback(result === 'shared' ? t('statistics.shareOpened') : t('statistics.shareCopied'))
+      await trackEvent('share_result', { method: 'screenshot', today_minutes: todayMinutes })
+      showFeedback(result === 'shared' ? t('statistics.shareOpened') : t('statistics.shareCopied'))
     } catch {
-      setShareFeedback(t('statistics.shareUnavailable'))
+      showFeedback(t('statistics.shareUnavailable'))
     }
   }
 
@@ -322,9 +384,37 @@ export function StatisticsScreen() {
       <div className={`${shared.card} ${styles.shareCard}`}>
         <div className={shared.cardTitle}>{t('statistics.shareResult')}</div>
         <div className={styles.shareDesc}>{t('statistics.shareDesc')}</div>
-        <button type="button" className={`${shared.btn} ${shared.btnPrimary} ${styles.shareBtn}`} onClick={handleShare}>
+        <button
+          type="button"
+          className={`${shared.btn} ${shared.btnPrimary} ${styles.shareBtn}`}
+          onClick={() => setShowShareOptions((v) => !v)}
+        >
           {t('statistics.shareButton')}
         </button>
+        {showShareOptions && (
+          <div className={styles.shareOptions}>
+            <button type="button" className={styles.shareOptionBtn} onClick={handleCopyText}>
+              <span className={styles.shareOptionIcon} aria-hidden="true">📄</span>
+              {t('statistics.shareOptionText')}
+            </button>
+            <button type="button" className={styles.shareOptionBtn} onClick={handleCopyMarkdown}>
+              <span className={styles.shareOptionIcon} aria-hidden="true">📝</span>
+              {t('statistics.shareOptionMarkdown')}
+            </button>
+            <button type="button" className={styles.shareOptionBtn} onClick={handleCopyLink}>
+              <span className={styles.shareOptionIcon} aria-hidden="true">🔗</span>
+              {t('statistics.shareOptionLink')}
+            </button>
+            <button type="button" className={styles.shareOptionBtn} onClick={handleShareToApp}>
+              <span className={styles.shareOptionIcon} aria-hidden="true">↗</span>
+              {t('statistics.shareOptionApp')}
+            </button>
+            <button type="button" className={styles.shareOptionBtn} onClick={handleShareScreenshot}>
+              <span className={styles.shareOptionIcon} aria-hidden="true">📷</span>
+              {t('statistics.shareOptionScreenshot')}
+            </button>
+          </div>
+        )}
         {shareFeedback && <div className={styles.shareFeedback}>{shareFeedback}</div>}
       </div>
     </div>

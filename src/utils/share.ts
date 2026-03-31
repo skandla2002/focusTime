@@ -1,3 +1,52 @@
+export interface StudyStats {
+  date: string
+  todayMinutes: number
+  weekTotal: number
+  monthTotal: number
+  totalMinutes: number
+  todaySessions: number
+}
+
+export function generateTextReport(stats: StudyStats): string {
+  return [
+    `[FocusTimer] ${stats.date}`,
+    `Today: ${stats.todayMinutes} min (${stats.todaySessions} sessions)`,
+    `This week: ${stats.weekTotal} min`,
+    `This month: ${stats.monthTotal} min`,
+    `Total: ${stats.totalMinutes} min`,
+    '#FocusTimer',
+  ].join('\n')
+}
+
+export function generateMarkdownReport(stats: StudyStats): string {
+  return [
+    `## FocusTimer Study Record — ${stats.date}`,
+    '',
+    '| Period | Time |',
+    '| --- | --- |',
+    `| Today | ${stats.todayMinutes} min (${stats.todaySessions} sessions) |`,
+    `| This week | ${stats.weekTotal} min |`,
+    `| This month | ${stats.monthTotal} min |`,
+    `| Total | ${stats.totalMinutes} min |`,
+    '',
+    '#FocusTimer',
+  ].join('\n')
+}
+
+export function generateShareUrl(stats: StudyStats): string {
+  const params = new URLSearchParams({
+    today: String(stats.todayMinutes),
+    week: String(stats.weekTotal),
+    month: String(stats.monthTotal),
+    total: String(stats.totalMinutes),
+    sessions: String(stats.todaySessions),
+    date: stats.date,
+  })
+  const base: string =
+    (import.meta.env['VITE_SHARE_BASE_URL'] as string | undefined) ?? 'https://focustimer.app/share'
+  return `${base}?${params.toString()}`
+}
+
 export interface ShareStudyResultInput {
   title: string
   text: string

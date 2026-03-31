@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f0f23" />
+    <title>FocusTimer 학습 결과</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background: #0f0f23;
+        color: #e0e0e0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100dvh;
+        padding: 24px 16px;
+      }
+
+      .card {
+        background: #1a1a35;
+        border: 1px solid #2a2a50;
+        border-radius: 20px;
+        padding: 28px 24px;
+        width: 100%;
+        max-width: 360px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .brand-name {
+        font-size: 18px;
+        font-weight: 700;
+        color: #ffffff;
+      }
+
+      .date {
+        font-size: 13px;
+        color: #9e9e9e;
+        margin-bottom: 20px;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .stat-block {
+        background: #0f0f23;
+        border-radius: 12px;
+        padding: 14px;
+      }
+
+      .stat-label {
+        font-size: 11px;
+        color: #9e9e9e;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 6px;
+      }
+
+      .stat-value {
+        font-size: 26px;
+        font-weight: 800;
+        line-height: 1;
+        margin-bottom: 2px;
+      }
+
+      .stat-unit {
+        font-size: 11px;
+        color: #9e9e9e;
+      }
+
+      .stat-today .stat-value { color: #8b5cf6; }
+      .stat-week .stat-value  { color: #4fc3f7; }
+      .stat-month .stat-value { color: #81c784; }
+      .stat-total .stat-value { color: #ffb74d; }
+
+      .sessions-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #0f0f23;
+        border-radius: 12px;
+        padding: 12px 14px;
+        margin-bottom: 20px;
+        font-size: 13px;
+        color: #9e9e9e;
+      }
+
+      .sessions-count {
+        font-size: 16px;
+        font-weight: 700;
+        color: #ffffff;
+      }
+
+      .footer {
+        text-align: center;
+        font-size: 12px;
+        color: #555577;
+      }
+
+      .no-data {
+        text-align: center;
+        color: #9e9e9e;
+        padding: 40px 0;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card" id="card">
+      <div class="no-data" id="no-data">Loading…</div>
+    </div>
+    <script>
+      ;(function () {
+        var params = new URLSearchParams(location.search)
+        var today = parseInt(params.get('today') || '0', 10)
+        var week = parseInt(params.get('week') || '0', 10)
+        var month = parseInt(params.get('month') || '0', 10)
+        var total = parseInt(params.get('total') || '0', 10)
+        var sessions = parseInt(params.get('sessions') || '0', 10)
+        var date = params.get('date') || ''
+
+        if (!date) {
+          document.getElementById('no-data').textContent =
+            '공유 데이터가 없습니다. FocusTimer 앱에서 공유해주세요.'
+          return
+        }
+
+        var lang = navigator.language.startsWith('zh') ? 'zh' : navigator.language.startsWith('ko') ? 'ko' : 'en'
+        var labels = {
+          ko: { today: '오늘', week: '이번 주', month: '이번 달', total: '누적', sessions: '완료 세션', min: '분', made: 'FocusTimer로 만든 학습 결과' },
+          en: { today: 'Today', week: 'This Week', month: 'This Month', total: 'Total', sessions: 'Sessions', min: 'min', made: 'Study result via FocusTimer' },
+          zh: { today: '今天', week: '本周', month: '本月', total: '累计', sessions: '完成时段', min: '分钟', made: 'FocusTimer 学习结果' },
+        }
+        var L = labels[lang] || labels['en']
+
+        document.title = 'FocusTimer — ' + date
+
+        var card = document.getElementById('card')
+        card.innerHTML = [
+          '<div class="brand">',
+          '  <div class="brand-name">FocusTimer</div>',
+          '</div>',
+          '<div class="date">' + date + '</div>',
+          '<div class="stats-grid">',
+          '  <div class="stat-block stat-today">',
+          '    <div class="stat-label">' + L.today + '</div>',
+          '    <div class="stat-value">' + today + '</div>',
+          '    <div class="stat-unit">' + L.min + '</div>',
+          '  </div>',
+          '  <div class="stat-block stat-week">',
+          '    <div class="stat-label">' + L.week + '</div>',
+          '    <div class="stat-value">' + week + '</div>',
+          '    <div class="stat-unit">' + L.min + '</div>',
+          '  </div>',
+          '  <div class="stat-block stat-month">',
+          '    <div class="stat-label">' + L.month + '</div>',
+          '    <div class="stat-value">' + month + '</div>',
+          '    <div class="stat-unit">' + L.min + '</div>',
+          '  </div>',
+          '  <div class="stat-block stat-total">',
+          '    <div class="stat-label">' + L.total + '</div>',
+          '    <div class="stat-value">' + total + '</div>',
+          '    <div class="stat-unit">' + L.min + '</div>',
+          '  </div>',
+          '</div>',
+          '<div class="sessions-row">',
+          '  <span>' + L.sessions + '</span>',
+          '  <span class="sessions-count">' + sessions + '</span>',
+          '</div>',
+          '<div class="footer">' + L.made + '</div>',
+        ].join('')
+      })()
+    </script>
+  </body>
+</html>

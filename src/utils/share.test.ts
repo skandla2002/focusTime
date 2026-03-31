@@ -1,5 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { shareScreenshot, shareStudyResult } from './share'
+import {
+  generateMarkdownReport,
+  generateShareUrl,
+  generateTextReport,
+  shareScreenshot,
+  shareStudyResult,
+} from './share'
+import type { StudyStats } from './share'
 
 const { html2canvasMock } = vi.hoisted(() => ({
   html2canvasMock: vi.fn(),
@@ -15,6 +22,67 @@ function setNavigatorValue(key: keyof Navigator, value: unknown) {
     value,
   })
 }
+
+const sampleStats: StudyStats = {
+  date: '2026-03-31',
+  todayMinutes: 90,
+  weekTotal: 420,
+  monthTotal: 1800,
+  totalMinutes: 12300,
+  todaySessions: 3,
+}
+
+describe('generateTextReport', () => {
+  it('should include the date and all stats', () => {
+    const report = generateTextReport(sampleStats)
+    expect(report).toContain('2026-03-31')
+    expect(report).toContain('90 min')
+    expect(report).toContain('3 sessions')
+    expect(report).toContain('420 min')
+    expect(report).toContain('1800 min')
+    expect(report).toContain('12300 min')
+    expect(report).toContain('#FocusTimer')
+  })
+
+  it('should produce a plain text string with no markdown', () => {
+    const report = generateTextReport(sampleStats)
+    expect(report).not.toContain('|')
+    expect(report).not.toContain('##')
+  })
+})
+
+describe('generateMarkdownReport', () => {
+  it('should include a markdown heading and table', () => {
+    const report = generateMarkdownReport(sampleStats)
+    expect(report).toContain('## FocusTimer Study Record — 2026-03-31')
+    expect(report).toContain('| Period | Time |')
+    expect(report).toContain('| Today | 90 min (3 sessions) |')
+    expect(report).toContain('| This week | 420 min |')
+    expect(report).toContain('| This month | 1800 min |')
+    expect(report).toContain('| Total | 12300 min |')
+    expect(report).toContain('#FocusTimer')
+  })
+})
+
+describe('generateShareUrl', () => {
+  it('should encode all stats as query parameters', () => {
+    const url = generateShareUrl(sampleStats)
+    expect(url).toContain('today=90')
+    expect(url).toContain('week=420')
+    expect(url).toContain('month=1800')
+    expect(url).toContain('total=12300')
+    expect(url).toContain('sessions=3')
+    expect(url).toContain('date=2026-03-31')
+  })
+
+  it('should use VITE_SHARE_BASE_URL when set', () => {
+    const original = import.meta.env['VITE_SHARE_BASE_URL']
+    import.meta.env['VITE_SHARE_BASE_URL'] = 'https://my.app/share'
+    const url = generateShareUrl(sampleStats)
+    expect(url.startsWith('https://my.app/share?')).toBe(true)
+    import.meta.env['VITE_SHARE_BASE_URL'] = original
+  })
+})
 
 describe('share utils', () => {
   beforeEach(() => {

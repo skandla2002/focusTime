@@ -32,6 +32,19 @@ function getDurationForMode(mode: TimerMode): number {
   return mode === 'focus' ? FOCUS_DURATION : BREAK_DURATION
 }
 
+function getTransitionState(currentMode: TimerMode, nextMode: TimerMode, transitionedAt: number) {
+  const autoStart = currentMode === 'focus'
+
+  return {
+    mode: nextMode,
+    status: autoStart ? 'running' : 'idle',
+    timeLeft: getDurationForMode(nextMode),
+    sessionStart: autoStart ? transitionedAt : null,
+    lastCompletionAt: transitionedAt,
+    lastCompletedMode: currentMode,
+  } as const
+}
+
 export const useTimerStore = create<TimerState>((set, get) => ({
   mode: 'focus',
   status: 'idle',
@@ -148,14 +161,9 @@ export const useTimerStore = create<TimerState>((set, get) => ({
       const nextMode: TimerMode = mode === 'focus' ? 'break' : 'focus'
       const completedAt = Date.now()
       set({
-        mode: nextMode,
-        status: 'running',
-        timeLeft: getDurationForMode(nextMode),
-        sessionStart: completedAt,
+        ...getTransitionState(mode, nextMode, completedAt),
         backgroundedAt: null,
         completedToday: mode === 'focus' ? completedToday + 1 : completedToday,
-        lastCompletionAt: completedAt,
-        lastCompletedMode: mode,
         lastCompletedSession: session,
         savedModeState: {
           ...savedModeState,
@@ -194,16 +202,11 @@ export const useTimerStore = create<TimerState>((set, get) => ({
       }
 
       const nextMode: TimerMode = mode === 'focus' ? 'break' : 'focus'
-      const nextSessionStart = Date.now()
+      const completedAt = Date.now()
       set({
-        mode: nextMode,
-        status: 'running',
-        timeLeft: getDurationForMode(nextMode),
-        sessionStart: nextSessionStart,
+        ...getTransitionState(mode, nextMode, completedAt),
         backgroundedAt: null,
         completedToday: mode === 'focus' ? completedToday + 1 : completedToday,
-        lastCompletionAt: nextSessionStart,
-        lastCompletedMode: mode,
         lastCompletedSession: session,
         savedModeState: {
           ...savedModeState,

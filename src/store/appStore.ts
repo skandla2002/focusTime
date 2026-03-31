@@ -5,6 +5,7 @@ export type AppScreen = Screen | 'login'
 export type VisualMode = 'color' | 'grayscale'
 
 const VISUAL_MODE_KEY = 'focustimer_visual_mode'
+const STATISTICS_AD_COOLDOWN_KEY = 'focustimer_stats_ad_last'
 
 function loadVisualMode(): VisualMode {
   try {
@@ -12,6 +13,21 @@ function loadVisualMode(): VisualMode {
     return stored === 'grayscale' ? 'grayscale' : 'color'
   } catch {
     return 'color'
+  }
+}
+
+function loadLastStatisticsAdAt(): number | null {
+  try {
+    const stored = localStorage.getItem(STATISTICS_AD_COOLDOWN_KEY)
+
+    if (!stored) {
+      return null
+    }
+
+    const parsed = Number(stored)
+    return Number.isFinite(parsed) ? parsed : null
+  } catch {
+    return null
   }
 }
 
@@ -37,7 +53,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   showInterstitial: false,
   focusLock: false,
   user: null,
-  lastStatisticsAdAt: null,
+  lastStatisticsAdAt: loadLastStatisticsAdAt(),
   visualMode: loadVisualMode(),
 
   navigate: (screen: AppScreen) => {
@@ -57,6 +73,11 @@ export const useAppStore = create<AppState>((set, get) => ({
     const ONE_HOUR = 3_600_000
     const now = Date.now()
     if (!lastStatisticsAdAt || now - lastStatisticsAdAt >= ONE_HOUR) {
+      try {
+        localStorage.setItem(STATISTICS_AD_COOLDOWN_KEY, String(now))
+      } catch {
+        // ignore storage errors
+      }
       set({ showInterstitial: true, lastStatisticsAdAt: now })
     }
   },

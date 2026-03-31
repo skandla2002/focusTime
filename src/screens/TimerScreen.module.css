@@ -221,6 +221,24 @@
   opacity: 0.45;
 }
 
+.today-focus-summary {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 20px;
+  color: var(--text-secondary);
+}
+
+.today-focus-summary-label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.today-focus-summary-value {
+  font-size: 18px;
+  color: var(--text-primary);
+}
+
 .today-summary {
   display: flex;
   justify-content: space-around;

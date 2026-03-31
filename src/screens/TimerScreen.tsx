@@ -20,6 +20,7 @@ interface CompletionNotice {
 
 export function TimerScreen() {
   const { t } = useTranslation()
+  const todayMinutes = useStudyStore((state) => state.getTodayMinutes())
   const {
     mode,
     status,
@@ -85,7 +86,7 @@ export function TimerScreen() {
         ? t('timer.completionFocusBody', { duration: lastCompletedDuration })
         : lastCompletedMode === 'focus'
           ? t('timer.alertFocusBody')
-          : t('timer.alertBreakBody')
+          : t('timer.completionBreakBody')
 
     setCompletionNotice({ title, body })
 
@@ -326,6 +327,11 @@ export function TimerScreen() {
             >
               {t('timer.settingsShort')}
             </button>
+          </div>
+
+          <div className={styles.todayFocusSummary}>
+            <span className={styles.todayFocusSummaryLabel}>{t('timer.todayFocusTime')}</span>
+            <strong className={styles.todayFocusSummaryValue}>{formatMinutes(todayMinutes)}</strong>
           </div>
         </div>
 

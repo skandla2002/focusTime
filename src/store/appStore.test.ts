@@ -33,6 +33,7 @@ describe('appStore', () => {
 
     expect(useAppStore.getState().showInterstitial).toBe(true)
     expect(useAppStore.getState().lastStatisticsAdAt).toBe(Date.now())
+    expect(localStorageMock.getItem('focustimer_stats_ad_last')).toBe(String(Date.now()))
   })
 
   it('[appStore] triggerStatisticsAd should skip ad within 1-hour cooldown', () => {
@@ -70,5 +71,14 @@ describe('appStore', () => {
 
     expect(useAppStore.getState().visualMode).toBe('color')
     expect(localStorageMock.getItem('focustimer_visual_mode')).toBe('color')
+  })
+
+  it('[appStore] should restore statistics ad cooldown from localStorage on initialization', async () => {
+    vi.resetModules()
+    localStorageMock.setItem('focustimer_stats_ad_last', '123456789')
+
+    const { useAppStore: reloadedStore } = await import('./appStore')
+
+    expect(reloadedStore.getState().lastStatisticsAdAt).toBe(123456789)
   })
 })
